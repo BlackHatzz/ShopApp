@@ -109,8 +109,6 @@ final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     
-    let colorOption = ColorOption()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         

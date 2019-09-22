@@ -12,15 +12,9 @@ import Firebase
 //private var productImages = [Int: [Int: UIImage]]()
 private var currentIndexProductImages: Int = 0
 private var product: Product? = nil
-//private var productCache: NSCache<AnyObject, Product> = {
-//    var productCache = NSCache<AnyObject, Product>()
-//    productCache.countLimit = 1000
-//    return productCache
-//}()
 
 class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     var databaseRef: DatabaseReference? = Database.database().reference(fromURL: "https://shopapp-96ec7.firebaseio.com/")
-    var loadingView: LoadingView! = LoadingView()
     
     
     let scrollView: UIScrollView = {
@@ -136,14 +130,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
 // --------------------------------------------------------------------------------
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        let count = product?.images[currentIndexProductImages]?.count ?? 0
-//        self.productCollectionView.statusCell = Array(repeating: ProductCollectionView.StatusCellKey.initialization, count: count)
-//        if self.productCollectionView.statusCell.count == 4 {
-//            self.productCollectionView.statusCell[1] = ProductCollectionView.StatusCellKey.loading
-//            self.productCollectionView.statusCell[3] = ProductCollectionView.StatusCellKey.loading
-//        }
-        
-//        print("zzstat", self.productCollectionView.statusCell.count)
         return product?.imageUrls[currentIndexProductImages]?.count ?? 0
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -164,119 +150,136 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let productCell = cell as! SlideProductCell
-        print("animating", indexPath.row)
-//        if productCell.statusCell == SlideProductCell.StatusCellKey.loading {
-//            productCell.productImageView.isHidden = true
-//            productCell.activityIndicatorView.startAnimating()
-//        }
-        print(self.productCollectionView.statusCell)
+        
         if self.productCollectionView.statusCell.count - 1 >= indexPath.row {
             if self.productCollectionView.statusCell[indexPath.row] == SlideProductCell.StatusCellKey.loading {
                 productCell.productImageView.isHidden = true
                 productCell.activityIndicatorView.startAnimating()
-                print("loading")
             } else {
                 productCell.productImageView.isHidden = false
                 productCell.activityIndicatorView.stopAnimating()
-                print("loaded")
             }
         }
 
     }
-
-//    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        let productCell = cell as! SlideProductCell
-//        print("animating", indexPath.row)
-//        if productCell.statusCell == SlideProductCell.StatusCellKey.loading {
-//            productCell.productImageView.isHidden = true
-//            productCell.activityIndicatorView.startAnimating()
-//        } else {
-//            productCell.productImageView.isHidden = false
-//            productCell.activityIndicatorView.stopAnimating()
-//        }
-//    }
     
 // --------------------------------------------------------------------------------
     
-    convenience init(product: Product) {
+    convenience init(ofProduct currentProduct: Product) {
         self.init()
         
-        if let imagesCount = product.images[currentIndexProductImages]?.count, let imagesUrlCount = product.imageUrls[currentIndexProductImages]?.count {
-            if imagesCount < imagesUrlCount {
-                for i in imagesCount..<imagesUrlCount {
-                    
-                }
-            }
+        self.scrollView.isHidden = false
+//        self.productCollectionView.backgroundColor = UIColor.black
+        
+////        self.databaseRef?.removeAllObservers()
+////        self.databaseRef = nil
+//
+        
+        
+        self.productCollectionView.reloadData()
+        self.colorMenu.collectionView.reloadData()
+        
+        product = currentProduct
+        guard let product = product else {
+            assertionFailure("product can not be nil")
+            return
         }
         
-//        if product.images[currentIndexProductImages]?.count != product.imageUrls[currentIndexProductImages]?.count {
-//
-//        }
+        self.colorMenu.collectionView.performBatchUpdates(nil) { (_) in
+            self.setContent()
+        }
+        
+        self.productPageControl.numberOfPages = product.imageUrls[currentIndexProductImages]?.count ?? 0
+        
+        // download missed image of current product
+        // get the quantity of images and imageUrls
+        if let imagesCount = product.images[currentIndexProductImages]?.count, let imagesUrlCount = product.imageUrls[currentIndexProductImages]?.count {
+            
+            // get images of product
+            if let imageUrls = product.imageUrls[currentIndexProductImages] {
+                
+                // get images of product
+                if var temp = product.images[currentIndexProductImages] {
+                    
+                    // if the quantity images is smaller than the quantity is imageUrls
+                    // download the remain images
+                    if imagesCount < imagesUrlCount {
+                        
+                        for i in imagesCount..<imagesUrlCount {
+                            Product.loadImageFromStorage(fromURLString: imageUrls[i]) { (result: UIImage?) in
+                                temp[i] = result
+                                product.images[currentIndexProductImages] = temp
+                                
+                                self.productCollectionView.reloadData()
+                            }
+                        } // loop over imageUrls
+                    } // check condition imagesCount and imagesUrlCount
+                }
+                
+            }
+            
+        }
     }
     
-    convenience init(productId: String) {
-        self.init()
-        
-        if let temp = productCache.object(forKey: productId as AnyObject) {
-            product = temp
-
-            self.productPageControl.numberOfPages = product?.images[currentIndexProductImages]?.count ?? 0
-
-            self.scrollView.isHidden = false
-
-            self.productCollectionView.reloadData()
-            self.databaseRef?.removeAllObservers()
-            self.databaseRef = nil
-            
-            productCollectionView.performBatchUpdates(nil) { (_) in
-                self.setContent()
-                self.loadingView = nil
-            }
-            
-//            self.setContent()
-
-            print("cache")
-            dump(productCache.object(forKey: productId as AnyObject))
-
-        } else {
-            // load product from product id
-            databaseRef?.child("product").child(productId).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String: Any] {
-                    product = Product(id: productId, productInfo: dictionary)
-                    product!.id = snapshot.key
-                    
-                    productCache.setObject(product!, forKey: productId as AnyObject)
-                    
-                    dump(product!)
-                    
-                    Product.loadImageFromStorage(fromURLStrings: product!.imageUrls[currentIndexProductImages]!, completion: { (result: [Int: UIImage]) in
-                        product?.images[currentIndexProductImages] = result
-                        
-                        self.productPageControl.numberOfPages = result.count
-                        
-                        self.scrollView.isHidden = false
-                        self.loadingView = nil
-                        
-                        self.productCollectionView.reloadData()
-                        self.databaseRef?.removeAllObservers()
-                        self.databaseRef = nil
-                        
-                        self.productCollectionView.performBatchUpdates(nil) { (_) in
-                            self.setContent()
-                        }
-                    })
-//                    self.setContent()
-                }
-            })
-        }
-        
-    }
+//    convenience init(productId: String) {
+//        self.init()
+//
+//        if let temp = productCache.object(forKey: productId as AnyObject) {
+//            product = temp
+//
+//            self.productPageControl.numberOfPages = product?.images[currentIndexProductImages]?.count ?? 0
+//
+//            self.scrollView.isHidden = false
+//
+//            self.productCollectionView.reloadData()
+//            self.databaseRef?.removeAllObservers()
+//            self.databaseRef = nil
+//
+//            productCollectionView.performBatchUpdates(nil) { (_) in
+//                self.setContent()
+//            }
+//
+////            self.setContent()
+//
+//            print("cache")
+//            dump(productCache.object(forKey: productId as AnyObject))
+//
+//        } else {
+//            // load product from product id
+//            databaseRef?.child("product").child(productId).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+//                if let dictionary = snapshot.value as? [String: Any] {
+//                    product = Product(id: productId, productInfo: dictionary)
+//                    product!.id = snapshot.key
+//
+//                    productCache.setObject(product!, forKey: productId as AnyObject)
+//
+//                    dump(product!)
+//
+//                    Product.loadImageFromStorage(fromURLStrings: product!.imageUrls[currentIndexProductImages]!, completion: { (result: [Int: UIImage]) in
+//                        product?.images[currentIndexProductImages] = result
+//
+//                        self.productPageControl.numberOfPages = result.count
+//
+//                        self.scrollView.isHidden = false
+//
+//                        self.productCollectionView.reloadData()
+//                        self.databaseRef?.removeAllObservers()
+//                        self.databaseRef = nil
+//
+//                        self.productCollectionView.performBatchUpdates(nil) { (_) in
+//                            self.setContent()
+//                        }
+//                    })
+////                    self.setContent()
+//                }
+//            })
+//        }
+//
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         typealias key = Product.InfoKey
-        
-        print("first", currentIndexProductImages)
         
         
         // when select a option in colorMenu
@@ -285,12 +288,9 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             
             // if selected element not in memory
             if product?.images[currentIndexProductImages] == nil {
-                print("abc")
-//                currentIndexProductImages = 0
-                self.productCollectionView.statusCell = Array(repeating: ProductCollectionView.StatusCellKey.loading, count: 4)
+                self.productCollectionView.statusCell = Array(repeating: ProductCollectionView.StatusCellKey.loading, count: product!.imageUrls[currentIndexProductImages]!.count)
                 self.productCollectionView.reloadData()
                 
-                print(product!.imageUrls[currentIndexProductImages]!)
                 
                 self.productCollectionView.performBatchUpdates(nil, completion: { (_) in
                     var temp = [Int: UIImage]()
@@ -405,10 +405,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         productCollectionView.dataSource = self
         productCollectionView.register(SlideProductCell.self, forCellWithReuseIdentifier: cellId)
         
-        view.addSubview(loadingView)
-        loadingView.frame = CGRect(x: 0, y: 0, width: 125, height: 125)
-        loadingView.center = view.center
-        
         setupViews()
         
         
@@ -428,7 +424,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             assertionFailure("product can not be nil")
             return
         }
-        print("set content")
+        
         // set all info of product
         
         self.navigationItem.title = product.designer
@@ -504,43 +500,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         
     }
     
-//    func loadImageFromStorage(fromURLStrings imageUrls: [String], completion: ((_ result: [Int: UIImage]) -> Void)?) {
-//        var initialResult = [Int: UIImage]()
-//        var resultCounter = imageUrls.count
-//        productImages[currentIndexProductImages] = [Int: UIImage]()
-//        for (index, imageUrl) in imageUrls.enumerated() {
-//            
-//            if let url = URL(string: imageUrl) {
-//                URLSession.shared.dataTask(with: url, completionHandler: { (data, response,error) in
-//                    if let error = error {
-//                        print("can not download image. Error is \(error)")
-//                        // error while downloading
-//                        resultCounter -= 1
-//                    } else if let data = data {
-//                        DispatchQueue.main.async {
-//                            if let image = UIImage(data: data) {
-//                                initialResult[index] = image
-//                                if initialResult.count == resultCounter {
-//                                    if let completion = completion {
-//                                        completion(initialResult)
-//                                    }
-//                                }
-//                            } else {
-//                                // image is nil
-//                                resultCounter -= 1
-//                            }
-//                        }
-//                        
-//                    } else {
-//                        // data is nil
-//                        resultCounter -= 1
-//                    }
-//                }).resume()
-//            } // check whether url is nil or not
-//        } // iterate over imageUrls
-//        // ??? get data ref
-//    }
-    // --------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------
     private func setupViews() {
         view.addSubview(scrollView)
         // set up main scroll view
@@ -687,121 +647,6 @@ final class ProductNameLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
 }
-// -------------------------------------------------------------------------------------------
-
-//final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return hexColorsList.count
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorMenu.cellId, for: indexPath) as! ColorOption
-//        
-//        cell.colorPickerView.backgroundColor = UIColor.colorFrom(hexString: hexColorsList[indexPath.row])
-//        
-//        return cell
-//    }
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: 30, height: 40)
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as! ColorOption
-//        cell.bottomLineView.isHidden = false
-//        currentIndexProductImages = indexPath.row
-//        if productImages[currentIndexProductImages] == nil {
-//            Product.loadImageFromStorage(fromURLStrings: product!.imageUrls![currentIndexProductImages]!) { (result: [Int : UIImage]) in
-//                productImages[currentIndexProductImages] = result
-////                self.collectionView.reloadInputViews()
-//            }
-//        }
-//        
-//        print("select", indexPath.row)
-//    }
-//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        let cell = collectionView.cellForItem(at: indexPath) as! ColorOption
-//        cell.bottomLineView.isHidden = true
-//        print("deselect", indexPath.row)
-//    }
-//    private static let cellId = "colorMenuCellId"
-//    
-//    var hexColorsList = [String]()
-//    
-//    private let titleLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = UIFont.helveticaNeue(ofsize: 14)
-//        label.text = "Color: "
-//        return label
-//    }()
-//    let collectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-//        layout.minimumInteritemSpacing = 5
-//        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-//        collectionView.showsHorizontalScrollIndicator = false
-//        collectionView.backgroundColor = UIColor.clear
-//        return collectionView
-//    }()
-//    
-//    final class ColorOption: UICollectionViewCell {
-//        var currentOption: Int = 0
-//        let colorPickerView: UIView = {
-//            let view = UIView()
-//            view.layer.borderWidth = 1
-//            view.layer.borderColor = UIColor.lightGray.cgColor
-//            return view
-//        }()
-//        
-//        let bottomLineView: UIView = {
-//            let view = UIView()
-//            view.backgroundColor = UIColor.black
-//            view.isHidden = true
-//            return view
-//        }()
-//        
-//        override init(frame: CGRect) {
-//            super.init(frame: frame)
-//            addSubview(colorPickerView)
-//            addSubview(bottomLineView)
-//            
-//            addConstraints(withFormat: "H:|[v0]|", views: colorPickerView)
-//            addConstraints(withFormat: "H:|[v0]|", views: bottomLineView)
-//            
-//            addConstraints(withFormat: "V:|[v0(30)]", views: colorPickerView)
-//            addConstraints(withFormat: "V:[v0(1.5)]|", views: bottomLineView)
-//        }
-//        
-//        required init?(coder aDecoder: NSCoder) {
-//            fatalError("init(coder:) has not been implemented")
-//        }
-//    }
-//    
-//    
-//    let colorOption = ColorOption()
-//    
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        collectionView.delegate = self
-//        collectionView.dataSource = self
-//        collectionView.register(ColorOption.self, forCellWithReuseIdentifier: ColorMenu.cellId)
-//        setupViews()
-//    }
-//    
-//    
-//    private func setupViews() {
-//        addSubview(titleLabel)
-//        addSubview(collectionView)
-//        
-//        addConstraints(withFormat: "H:|-12-[v0(40)]-12-[v1]|", views: titleLabel, collectionView)
-//        addConstraints(withFormat: "V:|[v0]|", views: titleLabel)
-//        addConstraints(withFormat: "V:|[v0]|", views: collectionView)
-//    }
-//    
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//    
-//}
 
 // ------------------------------------------------------------------------------------------------
 

@@ -55,7 +55,8 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
                                 let firstUrlImage = imageUrlsList![0]
                                 
                                 Product.loadImageFromStorage(fromURLString: firstUrlImage, completion: { (result: UIImage?) in
-                                    product.images[index] = [0: result!]
+//                                    product.images[index] = [0: result!]
+                                    products[index].images[0] = [0: result!]
                                     self.collectionView.reloadData()
                                 })
                             }
@@ -106,24 +107,13 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         let images = products[indexPath.row].images
         
         if !images.isEmpty {
-            let currentProductImagesList = images[indexPath.row]
+            let currentProductImagesList = images[0]
             let firstImage = currentProductImagesList![0]
 
             cell.productImageView.image = firstImage
         }
-//        cell.productImageView.image = nil
-//        print("indi", cell.activityIndicatorView)
-        
-//        cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleViewProductDetail)))
         
         return cell
-    }
-    @objc func handleViewProductDetail() {
-        print("handle")
-//        let viewController = ProductDetailController(productId: "-LnSlvkbBc3agYof2M7g")
-        let viewController = ProductDetailController(productId: "-LnaVumXnmOCsKvjQPnG")
-//        let viewController = ProductDetailController(productId: id)
-        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
 //    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -140,8 +130,9 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
         let id = products[indexPath.row].id
-        print("select ", indexPath.row, id)
-        let viewController = ProductDetailController(productId: id)
+        //        let viewController = ProductDetailController(productId: "-LnSlvkbBc3agYof2M7g")
+        //        let viewController = ProductDetailController(productId: "-LnaVumXnmOCsKvjQPnG")
+        let viewController = ProductDetailController(ofProduct: products[indexPath.row])
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
