@@ -281,7 +281,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         super.viewDidLoad()
         typealias key = Product.InfoKey
         
-        
         // when select a option in colorMenu
         self.colorMenu.didSelectItemHandler = {(_, indexPath) in
             currentIndexProductImages = indexPath.row
@@ -443,9 +442,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                 self.colorMenu.collectionView.performBatchUpdates(nil) { (_) in
                     self.colorMenu.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionView.ScrollPosition.left)
                     print("zz", self.colorMenu.collectionView.numberOfItems(inSection: 0))
-                    let firstResponderCell = self.colorMenu.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as! ColorMenu.ColorOption
+                    let firstResponderCell = self.colorMenu.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? ColorMenu.ColorOption
+                    if let firstResponderCell = firstResponderCell {
+                        firstResponderCell.bottomLineView.isHidden = false
+                    }
                     
-                    firstResponderCell.bottomLineView.isHidden = false
                 }
             }
         }
