@@ -35,7 +35,12 @@ class HomeViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         let backButton = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: self, action: nil)
         navigationItem.backBarButtonItem = backButton
-        navigationController?.hidesBarsOnSwipe = true
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.hidesBarsOnSwipe = false
     }
     
     private func setupViews() {

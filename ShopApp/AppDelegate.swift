@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 
+var customer = Customer(firstName: "Huy", lastName: "Nguyen")
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -23,15 +25,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let tabController = TabController()
+//        tabController.navigationController.is
 //        let viewController = ProductDetailController(productId: "-LnSlvkbBc3agYof2M7g")
         
-        let navi = UINavigationController(rootViewController: tabController)
-        navi.isNavigationBarHidden = true
-        window?.rootViewController = navi
+//        let navi = UINavigationController(rootViewController: tabController)
+//        navi.isNavigationBarHidden = true
+        window?.rootViewController = tabController
         
-        let navigateBarItem = UIBarButtonItem.appearance()
-        navigateBarItem.tintColor = UIColor.black
+        let navBarItem = UIBarButtonItem.appearance()
+        navBarItem.tintColor = UIColor.black
         
+        let navBar = UINavigationBar.appearance()
+        navBar.isTranslucent = false
         
         if let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView {
             statusBar.backgroundColor = UIColor.white

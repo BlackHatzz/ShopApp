@@ -70,15 +70,24 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
             print(error.localizedDescription)
         }
         
+    } // viewDidLoad
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.hidesBarsOnSwipe = true
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if self.isMovingFromParent {
+            products.removeAll()
+        }
     }
     
     private func setupNavBar() {
-        navigationController?.hidesBarsOnSwipe = true
         
         // set back button
-        let backButton = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: self, action: nil)
-        navigationItem.backBarButtonItem = backButton
-        
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
         
 //        shoppingBagButton.backgroundColor = UIColor.red
 //        shoppingBagButton.setImage(UIImage(named: "shopping-bag128")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
@@ -91,6 +100,9 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         shoppingBagButton.frame = CGRect(x: 0, y: 0, width: 30, height: 25)
         shoppingBagImageView.frame = CGRect(x: 0, y: 5, width: 30, height: 25)
         
+        shoppingBagButton.tag = 2
+        shoppingBagButton.addTarget(self, action: #selector(handleRightNavBarItem(_:)), for: UIControl.Event.touchUpInside)
+        
 //        searchButton.backgroundColor = UIColor.green
         let searchImageView = UIImageView()
         searchImageView.image = UIImage(named: "search.png")
@@ -99,6 +111,10 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         
         searchButton.frame = CGRect(x: 0, y: 0, width: 25, height: 20)
         searchImageView.frame = CGRect(x: 2, y: 8, width: 22, height: 22)
+        
+        searchButton.tag = 1
+        
+        searchButton.addTarget(self, action: #selector(handleRightNavBarItem(_:)), for: UIControl.Event.touchUpInside)
         
 //        shoppingBagImageView.centerXAnchor.constraint(equalTo: shoppingBagButton.centerXAnchor).isActive = true
 //        shoppingBagImageView.centerYAnchor.constraint(equalTo: shoppingBagButton.centerYAnchor).isActive = true
@@ -126,10 +142,26 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     override func viewDidLayoutSubviews() {
         print("search frame", searchButton.frame)
         print("shopping frame", shoppingBagButton.frame)
+        
     }
     
-    @objc func handleShoppingBagButton() {
-        print(123)
+    @objc func handleRightNavBarItem(_ sender: UIButton) {
+        print("sender", sender.tag)
+        
+        switch sender.tag {
+        case 1:
+            // searchButton
+            let viewController = SearchingController()
+            let navigationController = UINavigationController(rootViewController: viewController)
+            self.navigationController?.present(navigationController, animated: true, completion: nil)
+        case 2:
+            let viewController = BagController()
+            let navigationController = UINavigationController(rootViewController: viewController)
+            self.navigationController?.present(navigationController, animated: true, completion: nil)
+        default:
+            assertionFailure("Action is not supported")
+        }
+        
     }
     
 

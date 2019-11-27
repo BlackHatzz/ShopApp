@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Product {
+class Product: NSObject {
     var id: String
     var name: String?
     var imageUrls: [Int: [String]]
@@ -68,6 +68,7 @@ class Product {
     struct InfoKey {
         //static let id = "id"
         static let name = "name"
+        static let nameSearch = "nameSearch"
         static let imageUrls = "imageUrls"
         static let sizes = "sizes"
         static let discountPrice = "discountPrice"

@@ -16,6 +16,15 @@ private var product: Product? = nil
 class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     var databaseRef: DatabaseReference? = Database.database().reference(fromURL: "https://shopapp-96ec7.firebaseio.com/")
     
+    let notificationLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = NSTextAlignment.center
+        label.font = UIFont.helvetica(ofsize: 16)
+        label.backgroundColor = UIColor.clear
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    var notificationLabelHeightConstraint: NSLayoutConstraint? = nil
     
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -60,7 +69,25 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         pageControl.isUserInteractionEnabled = false
         return pageControl
     }()
-    let colorMenu = ColorMenu()
+    let colorTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.helveticaNeue(ofsize: 14)
+        label.backgroundColor = UIColor.clear
+//        label.contentMode = UIView.ContentMode.center
+        label.text = "Colors: "
+        return label
+    }()
+    let colorMenu: ColorMenu = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        layout.minimumInteritemSpacing = 5
+        let collectionView = ColorMenu(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.backgroundColor = UIColor.clear
+        return collectionView
+    }()
     
     let discountPriceLabel: UILabel = {
         let label = UILabel()
@@ -84,6 +111,18 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         return label
     }()
     let productStatusLabel = ProductStatusLabel()
+    
+    let sizeCollectionView: SizeCollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        layout.minimumInteritemSpacing = 10
+        let collectionView = SizeCollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
+    }()
     
     let addToBagButton: UIButton = {
         let button = UIButton(type: UIButton.ButtonType.system)
@@ -177,7 +216,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         
         
         self.productCollectionView.reloadData()
-        self.colorMenu.collectionView.reloadData()
+        self.colorMenu.reloadData()
         
         product = currentProduct
         guard let product = product else {
@@ -185,7 +224,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             return
         }
         
-        self.colorMenu.collectionView.performBatchUpdates(nil) { (_) in
+        self.colorMenu.performBatchUpdates(nil) { (_) in
             self.setContent()
         }
         
@@ -405,18 +444,66 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         productCollectionView.register(SlideProductCell.self, forCellWithReuseIdentifier: cellId)
         
         setupViews()
-        
-        
+        self.addToBagButton.addTarget(self, action: #selector(handleAddToBag), for: UIControl.Event.touchUpInside)
+        sizeCollectionView.productSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12", "UK 13"]
+    }
+    
+    @objc func handleAddToBag(_ sender: UIButton) {
+        print("add to bag")
+        if self.sizeCollectionView.selectedSize == nil {
+            print("no size")
+            
+            notificationLabel.text = "Please select a size"
+            notificationLabel.backgroundColor = UIColor.rgb(204, 152, 159)
+            UIView.animate(withDuration: 0.2) {
+                self.notificationLabelHeightConstraint?.constant = 20
+                self.view.layoutIfNeeded()
+            }
+        } else {
+            print("size")
+            if let product = product {
+                let id: String = product.id
+                let image: UIImage = product.images[currentIndexProductImages]![0]!
+                let designer: String = product.designer!
+                let name: String = product.name!
+                let size: String = self.sizeCollectionView.selectedSize!
+                let color: String = product.textColors![currentIndexProductImages]
+                let price: NSNumber = product.price!
+                let status: String = product.status!
+                let quantity: NSNumber = product.quantity
+                
+                let shoppingItem = ShoppingItem(id: id, image: image, designer: designer, name: name, size: size, color: color, price: price, status: status, quantity: quantity)
+                customer.shoppingBag.append(shoppingItem)
+                print("shoppingItem:")
+                dump(shoppingItem)
+//                self.id = id
+//                self.designer = designer
+//                self.name = name
+//                self.size = size
+//                self.color = color
+//                self.price = price
+//                self.status = status
+//                self.quantity = quantity
+            }
+            
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.hidesBarsOnSwipe = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.databaseRef?.removeAllObservers()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         currentIndexProductImages = 0
     }
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.databaseRef?.removeAllObservers()
-    }
+    
     
     private func setContent() {
         guard let product = product else {
@@ -437,12 +524,12 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                 self.colorMenu.hexColorsList = hexColors
                 
                 
-                self.colorMenu.collectionView.reloadData()
+                self.colorMenu.reloadData()
                 
-                self.colorMenu.collectionView.performBatchUpdates(nil) { (_) in
-                    self.colorMenu.collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionView.ScrollPosition.left)
-                    print("zz", self.colorMenu.collectionView.numberOfItems(inSection: 0))
-                    let firstResponderCell = self.colorMenu.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? ColorMenu.ColorOption
+                self.colorMenu.performBatchUpdates(nil) { (_) in
+                    self.colorMenu.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: UICollectionView.ScrollPosition.left)
+                    print("zz", self.colorMenu.numberOfItems(inSection: 0))
+                    let firstResponderCell = self.colorMenu.cellForItem(at: IndexPath(item: 0, section: 0)) as? ColorMenu.ColorOption
                     if let firstResponderCell = firstResponderCell {
                         firstResponderCell.bottomLineView.isHidden = false
                     }
@@ -504,12 +591,20 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
 // --------------------------------------------------------------------------------------------------------
     private func setupViews() {
         view.addSubview(scrollView)
+        self.view.addSubview(notificationLabel)
+        
+        // setup notification label
+        notificationLabel.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        notificationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        notificationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        notificationLabelHeightConstraint = notificationLabel.heightAnchor.constraint(equalToConstant: 1)
+        
+        notificationLabelHeightConstraint?.isActive = true
         // set up main scroll view
-        scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        scrollView.topAnchor.constraint(equalTo: notificationLabel.bottomAnchor).isActive = true
         scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         scrollView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        scrollView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
-        
+        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         // set up product view
         scrollView.addSubview(productContainerView)
@@ -522,12 +617,16 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         productContainerView.addSubview(productCollectionView)
         productContainerView.addSubview(productPageControl)
         
+        productContainerView.addSubview(colorTitleLabel)
         productContainerView.addSubview(colorMenu)
         
         productContainerView.addSubview(discountPriceLabel)
         productContainerView.addSubview(olddiscountPriceLabel)
         productContainerView.addSubview(discountLabel)
         productContainerView.addSubview(productStatusLabel)
+        
+        productContainerView.addSubview(sizeCollectionView)
+        
         productContainerView.addSubview(addToBagButton)
         productContainerView.addSubview(addToWishListButton)
         productContainerView.addSubview(productDetailInfo)
@@ -546,16 +645,21 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         
         // get estimated size of text view
         let size = CGSize(width: view.frame.width, height: CGFloat.infinity)
+        let nameEstimatedSizeForNameLabel = productNameLabel.sizeThatFits(size)
+        print("this", nameEstimatedSizeForNameLabel, productNameLabel.text, productDetailInfo.detailTextView.text)
         let estimatedSize1 = productDetailInfo.titleLabel.sizeThatFits(size) + productDetailInfo.detailTextView.sizeThatFits(size) + CGSize(width: 0, height: 24 + 2)
         let estimatedSize2 = productSizeAndFitInfo.titleLabel.sizeThatFits(size) + productSizeAndFitInfo.infoTextView.sizeThatFits(size) + CGSize(width: 0, height: 24 + 2)
         
         productContainerView.addConstraints(withFormat: "H:|[v0]|", views: productNameLabel)
         productContainerView.addConstraints(withFormat: "H:|[v0]|", views: productCollectionView)
         productContainerView.addConstraints(withFormat: "H:|-4-[v0]-4-|", views: productPageControl)
-        productContainerView.addConstraints(withFormat: "H:|-4-[v0]-4-|", views: colorMenu)
+        productContainerView.addConstraints(withFormat: "H:|-4-[v0(50)][v1]-4-|", views: colorTitleLabel, colorMenu)
         productContainerView.addConstraints(withFormat: "H:|-4-[v0]-4-|", views: discountPriceLabel)
         productContainerView.addConstraints(withFormat: "H:|-4-[v0(v1)]-20-[v1]-4-|", views: olddiscountPriceLabel, discountLabel)
         productContainerView.addConstraints(withFormat: "H:|-4-[v0]-4-|", views: productStatusLabel)
+        
+        productContainerView.addConstraints(withFormat: "H:|-4-[v0]-4-|", views: sizeCollectionView)
+        
         productContainerView.addConstraints(withFormat: "H:|-12-[v0]-12-|", views: addToBagButton)
         productContainerView.addConstraints(withFormat: "H:|-12-[v0]-12-|", views: addToWishListButton)
         productContainerView.addConstraints(withFormat: "H:|-12-[v0]-12-|", views: productDetailInfo)
@@ -567,10 +671,13 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         productContainerView.addConstraints(withFormat: "H:|[v0(v2)][v1(1)][v2]|", views: callUsButton, dividerLineView2, emailUsButton)
         productContainerView.addConstraints(withFormat: "H:|[v0]|", views: dividerLineView3)
         
-        productContainerView.addConstraints(withFormat: "V:|-8-[v0(20)]-8-[v1(400)]-4-[v2(14)]-12-[v3(40)]-14-[v4(22)]-8-[v5(20)]", views: productNameLabel, productCollectionView, productPageControl, colorMenu, discountPriceLabel, olddiscountPriceLabel)
+        productContainerView.addConstraints(withFormat: "V:|-8-[v0(\(nameEstimatedSizeForNameLabel.height))]-8-[v1(400)]-4-[v2(14)]-12-[v3(40)]-14-[v4(22)]-8-[v5(20)]", views: productNameLabel, productCollectionView, productPageControl, colorMenu, discountPriceLabel, olddiscountPriceLabel)
+        productContainerView.addConstraints(withFormat: "V:[v0]-12-[v1(40)]", views: productPageControl, colorTitleLabel)
         productContainerView.addConstraints(withFormat: "V:[v0]-8-[v1(20)]", views: discountPriceLabel, discountLabel)
         
-        productContainerView.addConstraints(withFormat: "V:[v0]-18-[v1(16)]-18-[v2(44)]-12-[v3(44)]-24-[v4(\(estimatedSize1.height))]-36-[v5(18)]-12-[v6(18)]-12-[v7(18)]-24-[v8(\(estimatedSize2.height))]-36-[v9(1)][v10(80)][v11(1)]", views: olddiscountPriceLabel, productStatusLabel, addToBagButton, addToWishListButton, productDetailInfo, productCompositionLabel, productCodeLabel, productColorLabel, productSizeAndFitInfo, dividerLineView1, callUsButton, dividerLineView3)
+        productContainerView.addConstraints(withFormat: "V:[v0]-18-[v1(40)]-18-[v2(16)]-18-[v3(44)]-12-[v4(44)]-24-[v5(\(estimatedSize1.height))]-36-[v6(18)]-12-[v7(18)]-12-[v8(18)]-24-[v9(\(estimatedSize2.height))]-36-[v10(1)][v11(80)][v12(1)]", views: olddiscountPriceLabel, sizeCollectionView, productStatusLabel, addToBagButton, addToWishListButton, productDetailInfo, productCompositionLabel, productCodeLabel, productColorLabel, productSizeAndFitInfo, dividerLineView1, callUsButton, dividerLineView3)
+//        productContainerView.addConstraints(withFormat: "V:[v0]-18-[v1(16)]-18-[v2(44)]-12-[v3(44)]-24-[v4(\(estimatedSize1.height))]-36-[v5(18)]-12-[v6(18)]-12-[v7(18)]-24-[v8(\(estimatedSize2.height))]-36-[v9(1)][v10(80)][v11(1)]", views: olddiscountPriceLabel, productStatusLabel, addToBagButton, addToWishListButton, productDetailInfo, productCompositionLabel, productCodeLabel, productColorLabel, productSizeAndFitInfo, dividerLineView1, callUsButton, dividerLineView3)
+        
         
         
         productContainerView.addConstraints(withFormat: "V:[v0][v1(80)]", views: dividerLineView1, emailUsButton)
@@ -587,6 +694,21 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         
         scrollView.contentSize.height = productContainerView.frame.height
         
+        // dynamic set height of productNameLabel
+        self.productNameLabel.superview?.constraints.forEach({ (constraint) in
+            if let firstItem = constraint.firstItem {
+                if firstItem === self.productNameLabel {
+                    if constraint.secondItem == nil {
+                        if constraint.firstAttribute == .height {
+                            let size = CGSize(width: self.view.frame.width, height: CGFloat.infinity)
+                            let estimatedSize = self.productNameLabel.sizeThatFits(size)
+                            constraint.constant = estimatedSize.height
+                        }
+                    }
+                }
+            }
+        })
+        
         // dynamic set height of productDetailInfo
         self.productDetailInfo.superview?.constraints.forEach({ (constraint) in
             if let firstItem = constraint.firstItem {
@@ -602,6 +724,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             }
         })
         
+        // dynamic set height of productSizeAndFitInfo
         if productSizeAndFitInfo.infoTextView.customedText != nil {
             self.productSizeAndFitInfo.superview?.constraints.forEach { (constraint) in
                 if let firstItem = constraint.firstItem {
@@ -642,6 +765,8 @@ final class ProductNameLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.textAlignment = .center
+        self.lineBreakMode = NSLineBreakMode.byWordWrapping
+        self.numberOfLines = 0
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -670,6 +795,124 @@ final class ProductStatusLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+// ------------------------------------------------------------------------------------------------
+
+final class SizeCollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    var productSizes = [String]() {
+        didSet {
+            self.reloadData()
+        }
+    }
+    var selectedSize: String? = nil
+    private var selectedIndex: Int? = nil
+    private static let cellId = "sizeCellId"
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return productSizes.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SizeCollectionView.cellId, for: indexPath) as! SizeCollectionViewCell
+        
+        cell.sizeButton.setTitle(productSizes[indexPath.row], for: UIControl.State.normal)
+        cell.sizeButton.titleLabel?.text = productSizes[indexPath.row]
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 70, height: self.frame.height)
+    }
+    
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+        self.register(SizeCollectionViewCell.self, forCellWithReuseIdentifier: SizeCollectionView.cellId)
+        self.delegate = self
+        self.dataSource = self
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.selectedIndex = indexPath.row
+        self.selectedSize = self.productSizes[indexPath.row]
+        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? SizeCollectionViewCell else { return }
+        selectedCell.sizeButton.layer.borderWidth = 2
+        selectedCell.sizeButton.layer.borderColor = UIColor.black.cgColor
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let deselectedCell = collectionView.cellForItem(at: indexPath) as? SizeCollectionViewCell else { return }
+        deselectedCell.sizeButton.layer.borderWidth = 1
+        deselectedCell.sizeButton.layer.borderColor = UIColor.lightGray.cgColor
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        print("display")
+        guard let willDisplayedCell = cell as? SizeCollectionViewCell else { return }
+        print("display 2")
+        if selectedIndex == indexPath.row {
+            print("display show")
+            willDisplayedCell.sizeButton.layer.borderWidth = 2
+            willDisplayedCell.sizeButton.layer.borderColor = UIColor.black.cgColor
+        } else {
+            print("display hide")
+            willDisplayedCell.sizeButton.layer.borderWidth = 1
+            willDisplayedCell.sizeButton.layer.borderColor = UIColor.lightGray.cgColor
+        }
+    }
+//    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//        guard let displayedCell = collectionView.cellForItem(at: indexPath) as? SizeCollectionViewCell else { return }
+//        print("display 3")
+//        if selectedIndex == indexPath.row {
+//            print("display show 2")
+//            displayedCell.sizeButton.layer.borderWidth = 2
+//            displayedCell.sizeButton.layer.borderColor = UIColor.black.cgColor
+//        } else {
+//            print("display hide 2")
+//            displayedCell.sizeButton.layer.borderWidth = 1
+//            displayedCell.sizeButton.layer.borderColor = UIColor.lightGray.cgColor
+//        }
+//    }
+    
+    // ------------------------------------
+    final class SizeCollectionViewCell: UICollectionViewCell {
+        let sizeButton: UIButton = {
+            let button = UIButton(type: UIButton.ButtonType.system)
+            button.layer.borderWidth = 1
+            button.layer.borderColor = UIColor.lightGray.cgColor
+            button.backgroundColor = UIColor.white
+            button.setTitleColor(UIColor.black, for: UIControl.State.normal)
+            button.isUserInteractionEnabled = false
+            return button
+        }()
+        
+        override func prepareForReuse() {
+            super.prepareForReuse()
+            sizeButton.titleLabel?.text = nil
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            // set up views
+            addSubview(sizeButton)
+            
+            addConstraints(withFormat: "V:|[v0]|", views: sizeButton)
+            addConstraints(withFormat: "H:|[v0]|", views: sizeButton)
+            
+        }
+        
+        
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    // ------------------------------------
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 
 // ------------------------------------------------------------------------------------------------
 
@@ -749,7 +992,6 @@ final class ProductSizeAndFitInfo: UIView {
     let infoTextView: ProductSizeAndFitInfoTextView = {
         let textView = ProductSizeAndFitInfoTextView()
         textView.isScrollEnabled = false
-        textView.backgroundColor = UIColor.green
         return textView
     }()
     

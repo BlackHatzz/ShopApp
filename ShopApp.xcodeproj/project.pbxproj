@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		1509C62422FBDDF1007F74C1 /* DividerLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62322FBDDF1007F74C1 /* DividerLineView.swift */; };
 		1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62522FBEA36007F74C1 /* ConnectionButton.swift */; };
+		1522AA54234458D3002400A1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1522AA53234458D3002400A1 /* SearchController.swift */; };
+		154F6FD8237BDDBC008984F6 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F6FD7237BDDBC008984F6 /* Customer.swift */; };
+		154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */; };
+		155EAE0F23708FFB00F92449 /* BagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155EAE0E23708FFB00F92449 /* BagController.swift */; };
 		15A91FDA22DD7F7200C6D86E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A91FD922DD7F7200C6D86E /* AppDelegate.swift */; };
 		15A91FDC22DD7F7200C6D86E /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A91FDB22DD7F7200C6D86E /* HomeViewController.swift */; };
 		15A91FE122DD7F7300C6D86E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15A91FE022DD7F7300C6D86E /* Assets.xcassets */; };
@@ -36,6 +40,10 @@
 /* Begin PBXFileReference section */
 		1509C62322FBDDF1007F74C1 /* DividerLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerLineView.swift; sourceTree = "<group>"; };
 		1509C62522FBEA36007F74C1 /* ConnectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionButton.swift; sourceTree = "<group>"; };
+		1522AA53234458D3002400A1 /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
+		154F6FD7237BDDBC008984F6 /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
+		154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
+		155EAE0E23708FFB00F92449 /* BagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BagController.swift; sourceTree = "<group>"; };
 		15A91FD622DD7F7200C6D86E /* ShopApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShopApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15A91FD922DD7F7200C6D86E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		15A91FDB22DD7F7200C6D86E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -118,6 +126,8 @@
 				15A91FEC22DD7FCC00C6D86E /* CartViewController.swift */,
 				15C036BC22E0770800AEA788 /* ProductViewController.swift */,
 				15CBA2CF22E14714009E58ED /* ProductDetailController.swift */,
+				1522AA53234458D3002400A1 /* SearchController.swift */,
+				155EAE0E23708FFB00F92449 /* BagController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -153,6 +163,8 @@
 			isa = PBXGroup;
 			children = (
 				15C036B822E06D2800AEA788 /* Product.swift */,
+				154F6FD7237BDDBC008984F6 /* Customer.swift */,
+				154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -294,11 +306,14 @@
 				15CBA2D022E14714009E58ED /* ProductDetailController.swift in Sources */,
 				1509C62422FBDDF1007F74C1 /* DividerLineView.swift in Sources */,
 				15A91FDC22DD7F7200C6D86E /* HomeViewController.swift in Sources */,
+				154F6FD8237BDDBC008984F6 /* Customer.swift in Sources */,
 				15D1A39F22E7E83D00F82F52 /* SlideProductCell.swift in Sources */,
 				15AF16222312C30400CF3101 /* LoadingView.swift in Sources */,
 				15C036B922E06D2800AEA788 /* Product.swift in Sources */,
 				15A91FF622DDA4CC00C6D86E /* HomeCell.swift in Sources */,
 				15A91FF922DDB6F900C6D86E /* UIFont.swift in Sources */,
+				1522AA54234458D3002400A1 /* SearchController.swift in Sources */,
+				154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */,
 				15E65FF7232A20BD000EA2DA /* ProductCollectionView.swift in Sources */,
 				15C036BD22E0770800AEA788 /* ProductViewController.swift in Sources */,
 				15A91FEF22DD804000C6D86E /* TabController.swift in Sources */,
@@ -306,6 +321,7 @@
 				15D7C9D4231D51EA002FA0EC /* UIColor.swift in Sources */,
 				15CBA2D222E154D5009E58ED /* UIScrollView.swift in Sources */,
 				1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */,
+				155EAE0F23708FFB00F92449 /* BagController.swift in Sources */,
 				15CE16322324041C005AE9A1 /* ColorMenu.swift in Sources */,
 				15C036BB22E070E600AEA788 /* ProductCell.swift in Sources */,
 				15A91FDA22DD7F7200C6D86E /* AppDelegate.swift in Sources */,

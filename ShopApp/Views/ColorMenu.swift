@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+final class ColorMenu: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return hexColorsList.count
@@ -16,7 +16,7 @@ final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorMenu.cellId, for: indexPath) as! ColorOption
-        
+//
         cell.colorPickerView.backgroundColor = UIColor.colorFrom(hexString: hexColorsList[indexPath.row])
         
         return cell
@@ -44,12 +44,11 @@ final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     
     var didSelectItemHandler: ((_ collectionView: UICollectionView, _ indexPath: IndexPath) -> Void)? = nil
     
-//    func didSelectItem(withCompletionHandler completion: (() -> Void)?) {
-//        
-//        if let completion = completion {
-//            completion()
-//        }
-//    }
+    func didSelectItem(withCompletionHandler completion: (() -> Void)?) {
+        if let completion = completion {
+            completion()
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! ColorOption
@@ -59,22 +58,6 @@ final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     private static let cellId = "colorMenuCellId"
     
     var hexColorsList = [String]()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.helveticaNeue(ofsize: 14)
-        label.text = "Color: "
-        return label
-    }()
-    let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        layout.minimumInteritemSpacing = 5
-        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = UIColor.clear
-        return collectionView
-    }()
     
     final class ColorOption: UICollectionViewCell {
         let colorPickerView: UIView = {
@@ -95,10 +78,10 @@ final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSou
             super.init(frame: frame)
             addSubview(colorPickerView)
             addSubview(bottomLineView)
-            
+
             addConstraints(withFormat: "H:|[v0]|", views: colorPickerView)
             addConstraints(withFormat: "H:|[v0]|", views: bottomLineView)
-            
+
             addConstraints(withFormat: "V:|[v0(30)]", views: colorPickerView)
             addConstraints(withFormat: "V:[v0(1.5)]|", views: bottomLineView)
         }
@@ -108,26 +91,11 @@ final class ColorMenu: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         }
     }
     
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(ColorOption.self, forCellWithReuseIdentifier: ColorMenu.cellId)
-        setupViews()
-        
-        
-    }
-    
-    
-    private func setupViews() {
-        addSubview(titleLabel)
-        addSubview(collectionView)
-        
-        addConstraints(withFormat: "H:|-12-[v0(40)]-12-[v1]|", views: titleLabel, collectionView)
-        addConstraints(withFormat: "V:|[v0]|", views: titleLabel)
-        addConstraints(withFormat: "V:|[v0]|", views: collectionView)
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+        delegate = self
+        dataSource = self
+        register(ColorOption.self, forCellWithReuseIdentifier: ColorMenu.cellId)
     }
     
     required init?(coder aDecoder: NSCoder) {

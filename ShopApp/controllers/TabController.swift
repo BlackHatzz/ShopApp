@@ -26,6 +26,10 @@ class TabController: UITabBarController {
         cartNav.title = "Cart"
         cartNav.tabBarItem.image = UIImage(named: "cart-icon")
         
+//        let vc = FriendRequestsController()
+//        let nav = UINavigationController(rootViewController: vc)
+//        nav.title = "temp"
+        
         
         viewControllers = [homeNav, cartNav]
         self.tabBar.isTranslucent = false
