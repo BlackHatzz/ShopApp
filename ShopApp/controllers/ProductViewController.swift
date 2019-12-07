@@ -14,7 +14,7 @@ private var products = [Product]()
 
 class ProductViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     let databaseRef = Database.database().reference()
-    let loadingView = LoadingView()
+    let loadingView = NotificationView(title: "Loading", type: NotificationView.NotiType.loading)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,8 +23,6 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
 //        self.collectionView.dataSource = self
         
         view.addSubview(loadingView)
-        loadingView.frame = CGRect(x: 0, y: 0, width: 125, height: 125)
-        loadingView.center = view.center
         
         self.collectionView!.register(ProductCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         

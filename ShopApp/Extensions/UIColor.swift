@@ -6,7 +6,7 @@
 //  Copyright © 2019 Nguyễn Đức Huy. All rights reserved.
 //
 
-import UIKit
+import UIKit.UIColor
 import Foundation
 
 extension UIColor {

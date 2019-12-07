@@ -22,6 +22,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         label.font = UIFont.helvetica(ofsize: 16)
         label.backgroundColor = UIColor.clear
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
         return label
     }()
     var notificationLabelHeightConstraint: NSLayoutConstraint? = nil
@@ -448,20 +449,59 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         sizeCollectionView.productSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12", "UK 13"]
     }
     
+    func changeNotificationLabelStatus(withContent content: String, isHidden: Bool) {
+        notificationLabel.text = content
+        if isHidden {
+            // hide notification label
+            
+            notificationLabel.backgroundColor = UIColor.clear
+            UIView.animate(withDuration: 0.2, animations: {
+                self.notificationLabelHeightConstraint?.constant = 1
+                self.view.layoutIfNeeded()
+            }) { (_) in
+                self.notificationLabel.isHidden = true
+            }
+        } else {
+            // show notification label
+            self.notificationLabel.isHidden = false
+            notificationLabel.backgroundColor = UIColor.rgb(204, 152, 159)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.notificationLabelHeightConstraint?.constant = 20
+                self.view.layoutIfNeeded()
+            })
+        }
+    }
+    
     @objc func handleAddToBag(_ sender: UIButton) {
         print("add to bag")
         if self.sizeCollectionView.selectedSize == nil {
             print("no size")
             
-            notificationLabel.text = "Please select a size"
-            notificationLabel.backgroundColor = UIColor.rgb(204, 152, 159)
-            UIView.animate(withDuration: 0.2) {
-                self.notificationLabelHeightConstraint?.constant = 20
-                self.view.layoutIfNeeded()
+//            notificationLabel.text = "Please select a size"
+//            notificationLabel.backgroundColor = UIColor.rgb(204, 152, 159)
+//            UIView.animate(withDuration: 0.2) {
+//                self.notificationLabelHeightConstraint?.constant = 20
+//                self.view.layoutIfNeeded()
+//            }
+            if notificationLabel.isHidden {
+                changeNotificationLabelStatus(withContent: "Please select a size", isHidden: false)
+            } else {
+                notificationLabel.text = "Please select a size"
             }
+            
         } else {
             print("size")
+            
+            
             if let product = product {
+                // change notification label
+                if notificationLabel.isHidden {
+                    changeNotificationLabelStatus(withContent: "Added to bag", isHidden: false)
+                } else {
+                    notificationLabel.text = "Added to bag"
+                }
+                
+                // get init values of product
                 let id: String = product.id
                 let image: UIImage = product.images[currentIndexProductImages]![0]!
                 let designer: String = product.designer!
@@ -484,6 +524,8 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
 //                self.price = price
 //                self.status = status
 //                self.quantity = quantity
+            } else {
+                assertionFailure("product cannot be nil")
             }
             
         }
@@ -646,7 +688,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         // get estimated size of text view
         let size = CGSize(width: view.frame.width, height: CGFloat.infinity)
         let nameEstimatedSizeForNameLabel = productNameLabel.sizeThatFits(size)
-        print("this", nameEstimatedSizeForNameLabel, productNameLabel.text, productDetailInfo.detailTextView.text)
         let estimatedSize1 = productDetailInfo.titleLabel.sizeThatFits(size) + productDetailInfo.detailTextView.sizeThatFits(size) + CGSize(width: 0, height: 24 + 2)
         let estimatedSize2 = productSizeAndFitInfo.titleLabel.sizeThatFits(size) + productSizeAndFitInfo.infoTextView.sizeThatFits(size) + CGSize(width: 0, height: 24 + 2)
         

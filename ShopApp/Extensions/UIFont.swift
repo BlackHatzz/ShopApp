@@ -6,7 +6,7 @@
 //  Copyright © 2019 Nguyễn Đức Huy. All rights reserved.
 //
 
-import UIKit
+import UIKit.UIFont
 
 extension UIFont {
     static func helvetica(ofsize size: CGFloat) -> UIFont {

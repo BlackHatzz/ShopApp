@@ -6,7 +6,7 @@
 //  Copyright © 2019 Nguyễn Đức Huy. All rights reserved.
 //
 
-import UIKit
+import UIKit.UIScrollView
 
 extension UIScrollView {
     func resize(direction: Direction) {

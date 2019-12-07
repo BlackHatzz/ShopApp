@@ -29,6 +29,18 @@ class BagController: UIViewController {
         return scrollView
     }()
     
+    let shoppingCollectionView: ShoppingCollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = UICollectionView.ScrollDirection.vertical
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        let shoppingCollectionView = ShoppingCollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        shoppingCollectionView.backgroundColor = UIColor.clear
+        shoppingCollectionView.showsHorizontalScrollIndicator = false
+        shoppingCollectionView.showsVerticalScrollIndicator = true
+        shoppingCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        return shoppingCollectionView
+    }()
     
     
     override func viewDidLoad() {
@@ -85,12 +97,12 @@ class BagController: UIViewController {
         containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -24).isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 900).isActive = true
         
-        let shoppingTableView = ShoppingTableView()
+//        let shoppingTableView = ShoppingTableView()
         
-        view.addSubview(shoppingTableView)
+        view.addSubview(shoppingCollectionView)
         
-        view.addConstraints(withFormat: "H:|[v0]|", views: shoppingTableView)
-        view.addConstraints(withFormat: "V:|[v0]|", views: shoppingTableView)
+        view.addConstraints(withFormat: "H:|[v0]|", views: shoppingCollectionView)
+        view.addConstraints(withFormat: "V:|[v0]|", views: shoppingCollectionView)
         
 //        shoppingItemViews.append(ShoppingItemView())
 //        shoppingItemViews.append(ShoppingItemView())
@@ -173,20 +185,18 @@ class BagController: UIViewController {
 //------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------
 
-class ShoppingTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
+class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private static let cellId = "shoppingId"
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return customer.shoppingBag.count
-    }
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+//        return 4
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ShoppingTableView.cellId, for: indexPath) as! ShoppingItemTableViewCell
-        cell.backgroundColor = UIColor.green
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingCollectionView.cellId, for: indexPath) as! ShoppingItemCell
         
         let item = customer.shoppingBag[indexPath.row]
         cell.productImageView.image = item.image
@@ -199,51 +209,31 @@ class ShoppingTableView: UITableView, UITableViewDelegate, UITableViewDataSource
         cell.statusLabel.text = item.status.uppercased()
         cell.quantityLabel.text = "Quantity: \(item.quantity)"
         
+        cell.removeButton.tag = indexPath.row
+        cell.removeButton.addTarget(self, action: #selector(handleRemoveItem), for: UIControl.Event.touchUpInside)
+        
         return cell
     }
     
-    override init(frame: CGRect, style: UITableView.Style) {
-        super.init(frame: frame, style: UITableView.Style.grouped)
-        self.register(ShoppingItemTableViewCell.self, forCellReuseIdentifier: ShoppingTableView.cellId)
+    @objc func handleRemoveItem(_ sender: UIButton) {
+        print("handle remove", sender.tag)
+    }
+    
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: frame, collectionViewLayout: layout)
+        register(ShoppingItemCell.self, forCellWithReuseIdentifier: ShoppingCollectionView.cellId)
         delegate = self
         dataSource = self
-        self.contentInset = UIEdgeInsets(top: -35, left: 0, bottom: -38, right: 0)
-        
-        self.backgroundColor = .red
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 300
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: self.frame.width, height: 300)
     }
-    func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
-        return 0
-    }
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 300
-    }
-    
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: UIContextualAction.Style.destructive, title: "delete") { (action, view, completionHandler) in
-            customer.shoppingBag.remove(at: indexPath.row)
-            self.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
-            completionHandler(true)
-        }
-        
-        
-        return UISwipeActionsConfiguration(actions: [delete])
-    }
-    
-//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if (editingStyle == .delete) {
-//            data.remove(at: indexPath.row)
-//            reloadData()
-//            // handle delete (by removing the data from your array and updating the tableview)
-//        }
-//    }
+
     
 }
 
@@ -251,7 +241,7 @@ class ShoppingTableView: UITableView, UITableViewDelegate, UITableViewDataSource
 //------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------
 
-class ShoppingItemTableViewCell: UITableViewCell {
+class ShoppingItemCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         productImageView.image = nil
@@ -264,12 +254,35 @@ class ShoppingItemTableViewCell: UITableViewCell {
         statusLabel.text = nil
         quantityLabel.text = nil
     }
+    
+    let leftContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.layer.zPosition = 1
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     let productImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = UIColor.clear
         imageView.image = UIImage(named: "searchImage")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
+    }()
+    
+    let rightContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let productInfoListView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     let designerLabel: UILabel = {
@@ -371,18 +384,151 @@ class ShoppingItemTableViewCell: UITableViewCell {
         return button
     }()
     
+    let interactionContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0.9, alpha: 1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    fileprivate let wishListButton: InteractionButton = {
+        let button = InteractionButton(image: UIImage(named: "heart"), title: "Move to Wish List")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor.clear
+        return button
+    }()
+    fileprivate let removeButton: InteractionButton = {
+        let button = InteractionButton(image: UIImage(named: "trash"), title: "Remove Item")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor.clear
+        return button
+    }()
+    
     let dividerLineView = DividerLineView()
     
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        self.backgroundColor = UIColor.clear
+    private var panGestureXFlag: CGFloat? = nil
+    private var endPanGestureCenterXFlag: CGFloat = 0.0
+    private var interactionContainerViewXFlag: CGFloat? = nil
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = UIColor.clear
+        setupViews()
+        
+        let panLeft = PanDirectionGestureRecognizer(direction: PanDirectionGestureRecognizer.Direction.horizontal, target: self, action: #selector(handleProductInfoListViewGesture(_:)))
+        productInfoListView.addGestureRecognizer(panLeft)
+        
+        let panRight = PanDirectionGestureRecognizer(direction: PanDirectionGestureRecognizer.Direction.horizontal, target: self, action: #selector(handleInteractionContainerViewGesture(_:)))
+        interactionContainerView.addGestureRecognizer(panRight)
+        
+        editButton.addTarget(self, action: #selector(handleEditButton), for: UIControl.Event.touchUpInside)
+        
+        // get center x of productInfoListView to pan guesture
+        DispatchQueue.main.async {
+            self.setNeedsDisplay()
+            self.panGestureXFlag = self.productInfoListView.center.x
+            self.interactionContainerViewXFlag = self.interactionContainerView.center.x
+//            self.endPanGestureCenterXFlag = self.productInfoListView.center.x + (self.productInfoListView.frame.width / 2)
+            print("test center", self.panGestureXFlag, self.endPanGestureCenterXFlag)
+        }
+    }
+    
+    @objc func handleEditButton() {
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+            self.productInfoListView.center.x = -self.panGestureXFlag!
+            self.interactionContainerView.center.x = self.panGestureXFlag!
+        }, completion: nil)
+    }
+    
+    @objc func handleProductInfoListViewGesture(_ gesture: UIPanGestureRecognizer) {
+        
+        // gesture.view is productInfoListView
+        if gesture.state == .began || gesture.state == .changed {
+            
+            if gesture.view!.center.x <= self.panGestureXFlag! && gesture.view!.center.x > self.endPanGestureCenterXFlag {
+                let translation = gesture.translation(in: self.productInfoListView)
+                // note: 'view' is optional and need to be unwrapped
+                // change guesture.view(productInfoListView) x to follows user's finger
+                gesture.view!.center = CGPoint(x: gesture.view!.center.x + translation.x, y: gesture.view!.center.y)
+                //  change interactionContainerView x to follow productInfoListView
+                self.interactionContainerView.center = CGPoint(x: interactionContainerView.center.x + translation.x, y: interactionContainerView.center.y)
+                
+                // set translate of gesture
+                gesture.setTranslation(CGPoint.zero, in: self.productInfoListView)
+            } else if gesture.view!.center.x <= self.endPanGestureCenterXFlag {
+                
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+                    // push gesture.view(productInfoListView) to left
+                    gesture.view!.center = CGPoint(x: -gesture.view!.frame.width / 2, y: gesture.view!.center.y)
+                    
+                    // show interactionContainerView
+                    self.interactionContainerView.center = CGPoint(x: self.interactionContainerView.frame.width / 2, y: self.interactionContainerView.center.y)
+                }, completion: nil)
+                
+            }
+            
+            // if gesture state is began or changed
+        } else if gesture.state == .ended {
+            // push two component: productInfoListView & interactionContainerView to left
+            if gesture.view!.center.x <= self.panGestureXFlag!/3 {
+                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+                    self.interactionContainerView.center.x = self.panGestureXFlag!
+                    self.productInfoListView.center.x = -self.productInfoListView.frame.width / 2
+                }, completion: nil)
+                
+            } else {
+                // push productInfoListView & interactionContainerView to previous position
+                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+                    self.interactionContainerView.center.x = self.interactionContainerViewXFlag!
+                    self.productInfoListView.center.x = self.panGestureXFlag!
+                }, completion: nil)
+            }
+        } // if gesture state is ended
+    } // end of handleProductInfoListViewGesture
+    
+    @objc func handleInteractionContainerViewGesture(_ gesture: UIPanGestureRecognizer) {
+        // gesture is interactionContainerView
+        if gesture.state == .began || gesture.state == .changed {
+            if gesture.view!.center.x >= panGestureXFlag! && gesture.view!.center.x < gesture.view!.frame.width {
+                let translation = gesture.translation(in: self.interactionContainerView)
+                
+                gesture.view!.center = CGPoint(x: gesture.view!.center.x + translation.x, y: gesture.view!.center.y)
+                //  change productInfoListView x to follow interactionContainerView
+                self.productInfoListView.center = CGPoint(x: productInfoListView.center.x + translation.x, y: productInfoListView.center.y)
+                print("pro x", productInfoListView.center.x, translation.x)
+                
+                // set translate of gesture
+                gesture.setTranslation(CGPoint.zero, in: interactionContainerView)
+            } else if gesture.view!.center.x >= gesture.view!.frame.width {
+                UIView.animate(withDuration: 0.3, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+                    self.productInfoListView.center.x = -self.productInfoListView.frame.width / 2
+                    // here
+                    self.interactionContainerView.center.x = self.panGestureXFlag!
+                }, completion: nil)
+            }
+        
+            // if gesture state is began or changed
+        } else if gesture.state == .ended {
+            // push two component: productInfoListView & interactionContainerView to right
+            if gesture.view!.center.x >= panGestureXFlag!/3 && gesture.view!.center.x > self.panGestureXFlag! {
+                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+                    self.interactionContainerView.center.x = self.interactionContainerViewXFlag!
+                    self.productInfoListView.center.x = self.panGestureXFlag!
+                }, completion: nil)
+                print("end", self.interactionContainerView.center.x, self.interactionContainerViewXFlag!)
+            } else {
+                // push productInfoListView & interactionContainerView to previous position
+                UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
+                    self.interactionContainerView.center.x = self.panGestureXFlag!
+                    self.productInfoListView.center.x = -self.productInfoListView.frame.width/2
+                }, completion: nil)
+            }
+        } // if gesture state is ended
+    } // end of handleInteractionContainerViewGesture
+    
+//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//        backgroundColor = .blue
 //        setupViews()
 //    }
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = .blue
-        setupViews()
-    }
 //    convenience init(image: UIImage, designer: String, name: String, size: String, id: String, color: String, price: NSNumber, status: String, quantity: NSNumber) {
 //
 //        self.productImageView.image = image
@@ -403,82 +549,189 @@ class ShoppingItemTableViewCell: UITableViewCell {
     }
     
     private func setupViews() {
-        addSubview(productImageView)
-        addSubview(designerLabel)
-        addSubview(productNameLabel)
-        addSubview(sizeLabel)
-        addSubview(codeLabel)
-        addSubview(colorLabel)
-        addSubview(priceLabel)
-        addSubview(statusLabel)
-        addSubview(quantityLabel)
-        addSubview(editButton)
+        
+        addSubview(leftContainerView)
+        leftContainerView.addSubview(productImageView)
+        
+        addSubview(rightContainerView)
+        
+        rightContainerView.addSubview(productInfoListView)
+        productInfoListView.addSubview(designerLabel)
+        productInfoListView.addSubview(productNameLabel)
+        productInfoListView.addSubview(sizeLabel)
+        productInfoListView.addSubview(codeLabel)
+        productInfoListView.addSubview(colorLabel)
+        productInfoListView.addSubview(priceLabel)
+        productInfoListView.addSubview(statusLabel)
+        productInfoListView.addSubview(quantityLabel)
+        productInfoListView.addSubview(editButton)
+        
+        rightContainerView.addSubview(interactionContainerView)
+        interactionContainerView.addSubview(wishListButton)
+        interactionContainerView.addSubview(removeButton)
+        
         addSubview(dividerLineView)
         
         dividerLineView.translatesAutoresizingMaskIntoConstraints = false
         [
+         // from bottom to top
+         dividerLineView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+         dividerLineView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
+         dividerLineView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 12),
+         dividerLineView.heightAnchor.constraint(equalToConstant: 1),
+            
          // from top to bottom
-         productImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
-         productImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+         // left content
+         leftContainerView.topAnchor.constraint(equalTo: self.topAnchor),
+         leftContainerView.leftAnchor.constraint(equalTo: self.leftAnchor),
+         leftContainerView.bottomAnchor.constraint(equalTo: dividerLineView.topAnchor),
+         leftContainerView.widthAnchor.constraint(equalToConstant: 120 + 12),
+            
+            
+         productImageView.topAnchor.constraint(equalTo: leftContainerView.topAnchor, constant: 16),
+         productImageView.leftAnchor.constraint(equalTo: leftContainerView.leftAnchor, constant: 12),
+         productImageView.rightAnchor.constraint(equalTo: leftContainerView.rightAnchor),
          productImageView.heightAnchor.constraint(equalToConstant: 200),
-         productImageView.widthAnchor.constraint(equalToConstant: 120),
          
-         designerLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         designerLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-         designerLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 12),
+         // right content
+         rightContainerView.topAnchor.constraint(equalTo: self.topAnchor),
+         rightContainerView.rightAnchor.constraint(equalTo: self.rightAnchor),
+         rightContainerView.bottomAnchor.constraint(equalTo: dividerLineView.topAnchor),
+         rightContainerView.leftAnchor.constraint(equalTo: leftContainerView.rightAnchor),
+         
+         // container view contain all info of product
+         productInfoListView.topAnchor.constraint(equalTo: rightContainerView.topAnchor),
+         productInfoListView.leftAnchor.constraint(equalTo: rightContainerView.leftAnchor),
+         productInfoListView.rightAnchor.constraint(equalTo: rightContainerView.rightAnchor),
+         productInfoListView.bottomAnchor.constraint(equalTo: rightContainerView.bottomAnchor),
+         
+         designerLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         designerLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
+         designerLabel.topAnchor.constraint(equalTo: productInfoListView.topAnchor, constant: 12),
          designerLabel.heightAnchor.constraint(equalToConstant: 18),
          
-         productNameLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         productNameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         productNameLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         productNameLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          productNameLabel.topAnchor.constraint(equalTo: designerLabel.bottomAnchor, constant: 12),
          productNameLabel.heightAnchor.constraint(equalToConstant: 18),
          
-         sizeLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         sizeLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         sizeLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         sizeLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          sizeLabel.topAnchor.constraint(equalTo: productNameLabel.bottomAnchor, constant: 12),
          sizeLabel.heightAnchor.constraint(equalToConstant: 18),
          
-         codeLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         codeLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         codeLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         codeLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          codeLabel.topAnchor.constraint(equalTo: sizeLabel.bottomAnchor, constant: 12),
          codeLabel.heightAnchor.constraint(equalToConstant: 18),
 
-         colorLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         colorLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         colorLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         colorLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          colorLabel.topAnchor.constraint(equalTo: codeLabel.bottomAnchor, constant: 12),
          colorLabel.heightAnchor.constraint(equalToConstant: 18),
          
-         priceLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         priceLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         priceLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         priceLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          priceLabel.topAnchor.constraint(equalTo: colorLabel.bottomAnchor, constant: 12),
          priceLabel.heightAnchor.constraint(equalToConstant: 18),
          
-         statusLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         statusLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         statusLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         statusLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          statusLabel.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8),
          statusLabel.heightAnchor.constraint(equalToConstant: 15),
          
-         quantityLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 12),
-         quantityLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         quantityLabel.leadingAnchor.constraint(equalTo: productInfoListView.leadingAnchor, constant: 12),
+         quantityLabel.trailingAnchor.constraint(equalTo: productInfoListView.trailingAnchor),
          quantityLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 12),
          quantityLabel.heightAnchor.constraint(equalToConstant: 18),
          
-         
-         // from bottom to top
-         dividerLineView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-         dividerLineView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-         dividerLineView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-         dividerLineView.heightAnchor.constraint(equalToConstant: 1),
-         
-         editButton.bottomAnchor.constraint(equalTo: dividerLineView.topAnchor, constant: -4),
-         editButton.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+         editButton.bottomAnchor.constraint(equalTo: productInfoListView.bottomAnchor, constant: -4),
+         editButton.rightAnchor.constraint(equalTo: productInfoListView.rightAnchor, constant: -8),
          editButton.heightAnchor.constraint(equalToConstant: 20),
-         editButton.widthAnchor.constraint(equalToConstant: 50)
+         editButton.widthAnchor.constraint(equalToConstant: 50),
+         
+         // container view contains buttons to interact with cell
+         interactionContainerView.leftAnchor.constraint(equalTo: productInfoListView.rightAnchor),
+         interactionContainerView.topAnchor.constraint(equalTo: rightContainerView.topAnchor),
+         interactionContainerView.bottomAnchor.constraint(equalTo: rightContainerView.bottomAnchor),
+         interactionContainerView.widthAnchor.constraint(equalTo: productInfoListView.widthAnchor),
+         
+         wishListButton.leftAnchor.constraint(equalTo: interactionContainerView.leftAnchor),
+         wishListButton.topAnchor.constraint(equalTo: interactionContainerView.topAnchor),
+         wishListButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+         wishListButton.widthAnchor.constraint(equalTo: interactionContainerView.widthAnchor, multiplier: 0.5),
+         
+         removeButton.rightAnchor.constraint(equalTo: interactionContainerView.rightAnchor),
+         removeButton.topAnchor.constraint(equalTo: interactionContainerView.topAnchor),
+         removeButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+         removeButton.widthAnchor.constraint(equalTo: interactionContainerView.widthAnchor, multiplier: 0.5)
          
             ].forEach { (constraint) in
             constraint.isActive = true
         }
-        
+    } // setupViews
+}
+
+fileprivate class InteractionButton: UIButton {
+    let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.clear
+        view.isUserInteractionEnabled = false
+        return view
+    }()
+    let iconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = UIColor.clear
+        return imageView
+    }()
+    let label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor.clear
+        label.font = UIFont.helvetica(ofsize: 12)
+        label.textAlignment = NSTextAlignment.center
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        // setupViews
+        setupViews()
     }
     
+    convenience init(image: UIImage?, title: String?) {
+        self.init(frame: CGRect.zero)
+        iconImageView.image = image
+        label.text = title
+    }
+    
+    private func setupViews() {
+        addSubview(containerView)
+        
+        containerView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        containerView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        containerView.widthAnchor.constraint(equalTo: self.widthAnchor).isActive = true
+        containerView.heightAnchor.constraint(equalToConstant: 56).isActive = true
+        
+        containerView.addSubview(iconImageView)
+        containerView.addSubview(label)
+        
+        iconImageView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        iconImageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        iconImageView.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        iconImageView.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        
+        label.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 16).isActive = true
+        label.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        label.heightAnchor.constraint(equalToConstant: 16).isActive = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
+
+
