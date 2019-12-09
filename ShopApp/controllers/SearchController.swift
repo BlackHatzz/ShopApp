@@ -75,7 +75,7 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         print("")
         print("change text field:", sender.text as Any)
         
-        // remove all ole searchResult when user change textField and remove collection view
+        // remove all searchResult when user change textField and remove collection view
         searchResult.removeAll()
         DispatchQueue.main.async {
             self.searchResultCollectionView.reloadData()
@@ -84,12 +84,19 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         // search text cannot be nil and empty
         // change searchText to lowercased
         guard let searchText = sender.text?.lowercased() else { return }
-        if searchText.isEmpty {
-            self.searchResultStatusLabel.text = nil
+        if searchText.count < 3 {
+            self.searchResultStatusLabel.text = "Input at least 3 characters"
+            self.searchResultStatusLabel.isHidden = false
+            self.searchResultStatusLabelHeightConstraint?.constant = 20
             return
+        } else {
+            self.searchResultStatusLabel.text = nil
+            self.searchResultStatusLabel.isHidden = true
+            self.searchResultStatusLabelHeightConstraint?.constant = 1
         }
         print("search text", searchText)
         
+        // search by product
         databaseRef.child("product").queryOrdered(byChild: "nameSearch").observe(DataEventType.value, with: { (snapshot) in
             print("search result")
             if let dictionary = snapshot.value as? [String: Any] {
@@ -102,8 +109,6 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
                         if let name = product[Product.InfoKey.nameSearch] as? String, let designer = product[Product.InfoKey.designer] as? String {
                             // if name of product like searchText of user
                             if name.contains(searchText) {
-                                
-                                //                                print("container!")
                                 self.searchResult.append((id: key, title: name, subtitle: designer))
                             }
                         }

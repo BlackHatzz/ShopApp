@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Foundation.NSTimer
 
 class NotificationView: UIView {
     var activityIndicatorView: UIActivityIndicatorView! = nil
@@ -19,22 +20,37 @@ class NotificationView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+//    private var timer: Timer = Timer()
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         self.frame = CGRect(x: 0, y: 0, width: 125, height: 125)
         if let superview = self.superview {
             self.center = superview.center
+            if notiType == .checked {
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 1.5, animations: {
+                        self.alpha = 0.0
+                    }) { (_) in
+                        self.removeFromSuperview()
+                    }
+                }
+            }
         }
+    }
+    @objc func removeView() {
+        
     }
     
     enum NotiType {
         case loading
         case checked
+        case none
     }
+    private var notiType: NotiType = NotiType.none
     
     convenience init(title: String?, type: NotiType) {
         self.init(frame: CGRect.zero)
+        self.notiType = type
         self.layer.zPosition = 100
         self.backgroundColor = UIColor(white: 0.9, alpha: 1)
         self.layer.cornerRadius = 4
@@ -66,6 +82,8 @@ class NotificationView: UIView {
             checkedImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -10).isActive = true
             checkedImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
             checkedImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        case .none:
+            assertionFailure()
         }
         
         self.addSubview(label)

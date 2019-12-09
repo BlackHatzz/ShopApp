@@ -49,6 +49,24 @@ class BagController: UIViewController {
         
         setupViews()
         
+        // set dataList in collection view
+        shoppingCollectionView.dataList = customer.shoppingBag
+        
+        // after remove an item of dataList in shoppingCollectionView
+        // also remove an item in shoppingBag
+        // and append the removed item to wishList
+        shoppingCollectionView.didHandleMoveItem = {(movedItem: ShoppingItem, index: Int) -> Void in
+            customer.shoppingBag.remove(at: index)
+            customer.wishList.append(movedItem)
+        }
+        
+        // after remove an item of dataList in shoppingCollectionView
+        // also remove an item in shoppingBag
+        shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
+            customer.shoppingBag.remove(at: index)
+        }
+        
+        // set handler for segmentedControl
         segmentedControl.addTarget(self, action: #selector(handleSegmentedControl(_:)), for: UIControl.Event.valueChanged)
     }
     
@@ -76,20 +94,11 @@ class BagController: UIViewController {
         
         view.addSubview(scrollView)
         
-//        view.addConstraints(withFormat: "H:|-12-[v0]-12-|", views: scrollView)
-//        view.addConstraints(withFormat: "V:|-12-[v0]-12-|", views: scrollView)
-        
         scrollView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 12).isActive = true
         scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-//        scrollView.contentSize = CGSize(width: 1000, height: 1000)
         
-//        let shoppingItemView = ShoppingItemView()
-//        shoppingItemView.backgroundColor = UIColor.red
-//
-//        scrollView.addSubview(shoppingItemView)
-//
         scrollView.addSubview(containerView)
         
         containerView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
@@ -97,59 +106,10 @@ class BagController: UIViewController {
         containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -24).isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 900).isActive = true
         
-//        let shoppingTableView = ShoppingTableView()
-        
         view.addSubview(shoppingCollectionView)
         
         view.addConstraints(withFormat: "H:|[v0]|", views: shoppingCollectionView)
         view.addConstraints(withFormat: "V:|[v0]|", views: shoppingCollectionView)
-        
-//        shoppingItemViews.append(ShoppingItemView())
-//        shoppingItemViews.append(ShoppingItemView())
-//        shoppingItemViews.append(ShoppingItemView())
-//        containerView.addSubview(shoppingItemViews[0])
-//        containerView.addSubview(shoppingItemViews[1])
-//        containerView.addSubview(shoppingItemViews[2])
-        
-//        containerView.addConstraints(withFormat: "H:|[v0]|", views: shoppingItemViews[0])
-//        containerView.addConstraints(withFormat: "H:|[v0]|", views: shoppingItemViews[1])
-//        containerView.addConstraints(withFormat: "H:|[v0]|", views: shoppingItemViews[2])
-//        containerView.addConstraints(withFormat: "V:|[v0(300)][v1(300)][v2(300)]", views: shoppingItemViews[0], shoppingItemViews[1], shoppingItemViews[2])
-        
-//        for item in customer.shoppingBag {
-//            print("add item")
-//            let item = ShoppingItemView(image: item.image, designer: item.designer, name: item.name, size: item.size, id: item.id, color: item.color, price: item.price, status: item.status, quantity: item.quantity)
-//            shoppingItemViews.append(item)
-//
-//        }
-        
-//        for (index, item) in shoppingItemViews.enumerated() {
-//            containerView.addSubview(item)
-//            print("add view")
-//            containerView.addConstraints(withFormat: "H:|[v0]|", views: item)
-//            if index == 0 {
-//                containerView.addConstraints(withFormat: "V:|[v0(300)]", views: item)
-//            } else {
-//                containerView.addConstraints(withFormat: "V:[v0][v1(300)]", views: shoppingItemViews[index - 1] , item)
-//            }
-//
-//        }
-    
-//        let shoppingItemViews = Array(repeating: ShoppingItemView(), count: 5)
-//
-//        for i in 0..<shoppingItemViews.count {
-//
-//            scrollView.addSubview(shoppingItemViews[i])
-//            shoppingItemViews[i].backgroundColor = UIColor.red
-//            if i == 0 {
-//                scrollView.addConstraints(withFormat: "V:|[v0(50)]", views: shoppingItemViews[i])
-//            } else {
-//                scrollView.addConstraints(withFormat: "V:[v0]-12-[v1(50)]", views: shoppingItemViews[i-1], shoppingItemViews[i])
-//            }
-//            scrollView.addConstraints(withFormat: "H:|[v0]|", views: shoppingItemViews[i])
-//
-//        }
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -165,9 +125,55 @@ class BagController: UIViewController {
     @objc private func handleSegmentedControl(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            print("seg 1")
+            // shopping bag
+            shoppingCollectionView.dataList = customer.shoppingBag
+            
+            // after remove an item of dataList in shoppingCollectionView
+            // also remove an item in shoppingBag
+            // and append the removed item to wishList
+            shoppingCollectionView.didHandleMoveItem = {(movedItem: ShoppingItem, index: Int) -> Void in
+                customer.shoppingBag.remove(at: index)
+                customer.wishList.append(movedItem)
+            }
+            
+            // after remove an item of dataList in shoppingCollectionView
+            // also remove an item in shoppingBag
+            shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
+                customer.shoppingBag.remove(at: index)
+            }
+            
+            // change button type
+            shoppingCollectionView.moveToAnotherListButtonType = .shoppingBag
+            
+            // reload data when all done
+            DispatchQueue.main.async {
+                self.shoppingCollectionView.reloadData()
+            }
         case 1:
-            print("seg 2")
+            // wish list
+            shoppingCollectionView.dataList = customer.wishList
+            
+            // after remove an item of dataList in shoppingCollectionView
+            // also remove an item in shoppingBag
+            // and append the removed item to wishList
+            shoppingCollectionView.didHandleMoveItem = {(movedItem: ShoppingItem, index: Int) -> Void in
+                customer.wishList.remove(at: index)
+                customer.shoppingBag.append(movedItem)
+            }
+            
+            // after remove an item of dataList in shoppingCollectionView
+            // also remove an item in wishList
+            shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
+                customer.wishList.remove(at: index)
+            }
+            
+            // change button type
+            shoppingCollectionView.moveToAnotherListButtonType = .wishList
+            
+            // reload data when all done
+            DispatchQueue.main.async {
+                self.shoppingCollectionView.reloadData()
+            }
         default:
             assertionFailure()
         }
@@ -187,10 +193,19 @@ class BagController: UIViewController {
 
 class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private static let cellId = "shoppingId"
-
+    var dataList: [ShoppingItem] = [ShoppingItem]()
+    
+    var didHandleMoveItem: ((_ movedItem: ShoppingItem, _ index: Int) -> Void)? = nil
+    var didRemoveItem: ((_ index: Int) -> Void)? = nil
+    
+    enum MoveToAnotherListButtonType {
+        case shoppingBag
+        case wishList
+    }
+    var moveToAnotherListButtonType = MoveToAnotherListButtonType.shoppingBag
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return customer.shoppingBag.count
-//        return 4
+        return dataList.count
     }
     
     
@@ -198,7 +213,7 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingCollectionView.cellId, for: indexPath) as! ShoppingItemCell
         
-        let item = customer.shoppingBag[indexPath.row]
+        let item = dataList[indexPath.row]
         cell.productImageView.image = item.image
         cell.designerLabel.text = item.designer
         cell.productNameLabel.text = item.name
@@ -209,14 +224,54 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
         cell.statusLabel.text = item.status.uppercased()
         cell.quantityLabel.text = "Quantity: \(item.quantity)"
         
-        cell.removeButton.tag = indexPath.row
-        cell.removeButton.addTarget(self, action: #selector(handleRemoveItem), for: UIControl.Event.touchUpInside)
+        switch moveToAnotherListButtonType {
+        case .shoppingBag:
+            cell.moveToAnotherListButton.iconImageView.image = UIImage(named: "heart")
+            cell.moveToAnotherListButton.label.text = "Move to Wish List"
+        case .wishList:
+            cell.moveToAnotherListButton.iconImageView.image = UIImage(named: "shopping-bag")
+            cell.moveToAnotherListButton.label.text = "Move to Bag"
+        }
+
+        cell.moveToAnotherListButton.tag = indexPath.row
+        cell.moveToAnotherListButton.addTarget(self, action: #selector(handlemoveToAnotherListButton(_:)), for: UIControl.Event.touchUpInside)
+
+        cell.removeToAnotherListButton.tag = indexPath.row
+        cell.removeToAnotherListButton.addTarget(self, action: #selector(handleRemoveItem), for: UIControl.Event.touchUpInside)
         
         return cell
     }
     
+    @objc private func handlemoveToAnotherListButton(_ sender: UIButton) {
+        // move to wishList and delete item in shoppingBag
+        DispatchQueue.main.async {
+            let movedItem = self.dataList.remove(at: sender.tag)
+            if let handler = self.didHandleMoveItem {
+                handler(movedItem, sender.tag)
+            }
+            self.performBatchUpdates({
+                self.deleteItems(at: [IndexPath(item: sender.tag, section: 0)])
+            }, completion: { (finished) in
+                let checkedView = NotificationView(title: "Updated", type: NotificationView.NotiType.checked)
+                self.superview?.addSubview(checkedView) // auto delete checkedView from superview after a while
+                self.reloadItems(at: self.indexPathsForVisibleItems)
+            })
+        }
+    }
+    
     @objc func handleRemoveItem(_ sender: UIButton) {
-        print("handle remove", sender.tag)
+        DispatchQueue.main.async {
+            self.dataList.remove(at: sender.tag)
+            if let handler = self.didRemoveItem {
+                handler(sender.tag)
+            }
+            print("remove", self.dataList, customer.shoppingBag)
+            self.performBatchUpdates({
+                self.deleteItems(at: [IndexPath(item: sender.tag, section: 0)])
+            }, completion: { (finished) in
+                self.reloadItems(at: self.indexPathsForVisibleItems)
+            })
+        }
     }
     
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
@@ -253,6 +308,10 @@ class ShoppingItemCell: UICollectionViewCell {
         priceLabel.text = nil
         statusLabel.text = nil
         quantityLabel.text = nil
+        if rightViewContent == RightViewContent.productInfoList {
+            productInfoListView.center.x = panGestureXFlag!
+            interactionContainerView.center.x = interactionContainerViewXFlag!
+        }
     }
     
     let leftContainerView: UIView = {
@@ -390,13 +449,13 @@ class ShoppingItemCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    fileprivate let wishListButton: InteractionButton = {
+    fileprivate let moveToAnotherListButton: InteractionButton = {
         let button = InteractionButton(image: UIImage(named: "heart"), title: "Move to Wish List")
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor.clear
         return button
     }()
-    fileprivate let removeButton: InteractionButton = {
+    fileprivate let removeToAnotherListButton: InteractionButton = {
         let button = InteractionButton(image: UIImage(named: "trash"), title: "Remove Item")
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = UIColor.clear
@@ -405,18 +464,25 @@ class ShoppingItemCell: UICollectionViewCell {
     
     let dividerLineView = DividerLineView()
     
+    
     private var panGestureXFlag: CGFloat? = nil
     private var endPanGestureCenterXFlag: CGFloat = 0.0
     private var interactionContainerViewXFlag: CGFloat? = nil
+    private enum RightViewContent {
+        case productInfoList
+        case interactionButton
+    }
+    private var rightViewContent = RightViewContent.productInfoList
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = UIColor.clear
         setupViews()
         
-        let panLeft = PanDirectionGestureRecognizer(direction: PanDirectionGestureRecognizer.Direction.horizontal, target: self, action: #selector(handleProductInfoListViewGesture(_:)))
+        let panLeft: PanDirectionGestureRecognizer = PanDirectionGestureRecognizer(direction: PanDirectionGestureRecognizer.Direction.horizontal, target: self, action: #selector(handleProductInfoListViewGesture(_:)))
         productInfoListView.addGestureRecognizer(panLeft)
         
-        let panRight = PanDirectionGestureRecognizer(direction: PanDirectionGestureRecognizer.Direction.horizontal, target: self, action: #selector(handleInteractionContainerViewGesture(_:)))
+        let panRight: PanDirectionGestureRecognizer = PanDirectionGestureRecognizer(direction: PanDirectionGestureRecognizer.Direction.horizontal, target: self, action: #selector(handleInteractionContainerViewGesture(_:)))
         interactionContainerView.addGestureRecognizer(panRight)
         
         editButton.addTarget(self, action: #selector(handleEditButton), for: UIControl.Event.touchUpInside)
@@ -426,8 +492,6 @@ class ShoppingItemCell: UICollectionViewCell {
             self.setNeedsDisplay()
             self.panGestureXFlag = self.productInfoListView.center.x
             self.interactionContainerViewXFlag = self.interactionContainerView.center.x
-//            self.endPanGestureCenterXFlag = self.productInfoListView.center.x + (self.productInfoListView.frame.width / 2)
-            print("test center", self.panGestureXFlag, self.endPanGestureCenterXFlag)
         }
     }
     
@@ -442,7 +506,6 @@ class ShoppingItemCell: UICollectionViewCell {
         
         // gesture.view is productInfoListView
         if gesture.state == .began || gesture.state == .changed {
-            
             if gesture.view!.center.x <= self.panGestureXFlag! && gesture.view!.center.x > self.endPanGestureCenterXFlag {
                 let translation = gesture.translation(in: self.productInfoListView)
                 // note: 'view' is optional and need to be unwrapped
@@ -454,13 +517,12 @@ class ShoppingItemCell: UICollectionViewCell {
                 // set translate of gesture
                 gesture.setTranslation(CGPoint.zero, in: self.productInfoListView)
             } else if gesture.view!.center.x <= self.endPanGestureCenterXFlag {
-                
                 UIView.animate(withDuration: 0.3, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
                     // push gesture.view(productInfoListView) to left
                     gesture.view!.center = CGPoint(x: -gesture.view!.frame.width / 2, y: gesture.view!.center.y)
                     
                     // show interactionContainerView
-                    self.interactionContainerView.center = CGPoint(x: self.interactionContainerView.frame.width / 2, y: self.interactionContainerView.center.y)
+                    self.interactionContainerView.center.x = self.panGestureXFlag!
                 }, completion: nil)
                 
             }
@@ -471,9 +533,10 @@ class ShoppingItemCell: UICollectionViewCell {
             if gesture.view!.center.x <= self.panGestureXFlag!/3 {
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
                     self.interactionContainerView.center.x = self.panGestureXFlag!
-                    self.productInfoListView.center.x = -self.productInfoListView.frame.width / 2
+                    self.productInfoListView.center.x = -self.panGestureXFlag!
                 }, completion: nil)
-                
+                // change status when push content
+                self.rightViewContent = RightViewContent.productInfoList
             } else {
                 // push productInfoListView & interactionContainerView to previous position
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
@@ -492,14 +555,13 @@ class ShoppingItemCell: UICollectionViewCell {
                 
                 gesture.view!.center = CGPoint(x: gesture.view!.center.x + translation.x, y: gesture.view!.center.y)
                 //  change productInfoListView x to follow interactionContainerView
-                self.productInfoListView.center = CGPoint(x: productInfoListView.center.x + translation.x, y: productInfoListView.center.y)
-                print("pro x", productInfoListView.center.x, translation.x)
+                self.productInfoListView.center.x = productInfoListView.center.x + translation.x
                 
                 // set translate of gesture
                 gesture.setTranslation(CGPoint.zero, in: interactionContainerView)
             } else if gesture.view!.center.x >= gesture.view!.frame.width {
                 UIView.animate(withDuration: 0.3, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
-                    self.productInfoListView.center.x = -self.productInfoListView.frame.width / 2
+                    self.productInfoListView.center.x = -self.panGestureXFlag!
                     // here
                     self.interactionContainerView.center.x = self.panGestureXFlag!
                 }, completion: nil)
@@ -508,11 +570,13 @@ class ShoppingItemCell: UICollectionViewCell {
             // if gesture state is began or changed
         } else if gesture.state == .ended {
             // push two component: productInfoListView & interactionContainerView to right
-            if gesture.view!.center.x >= panGestureXFlag!/3 && gesture.view!.center.x > self.panGestureXFlag! {
+            if gesture.view!.center.x >= panGestureXFlag!/3 + panGestureXFlag! && gesture.view!.center.x > self.panGestureXFlag! {
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
                     self.interactionContainerView.center.x = self.interactionContainerViewXFlag!
                     self.productInfoListView.center.x = self.panGestureXFlag!
                 }, completion: nil)
+                // change status when push content
+                self.rightViewContent = RightViewContent.interactionButton
                 print("end", self.interactionContainerView.center.x, self.interactionContainerViewXFlag!)
             } else {
                 // push productInfoListView & interactionContainerView to previous position
@@ -523,26 +587,6 @@ class ShoppingItemCell: UICollectionViewCell {
             }
         } // if gesture state is ended
     } // end of handleInteractionContainerViewGesture
-    
-//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        backgroundColor = .blue
-//        setupViews()
-//    }
-//    convenience init(image: UIImage, designer: String, name: String, size: String, id: String, color: String, price: NSNumber, status: String, quantity: NSNumber) {
-//
-//        self.productImageView.image = image
-//        self.designerLabel.text = designer
-//        self.productNameLabel.text = name
-//        self.sizeLabel.text = "Size: \(size)"
-//        self.codeLabel.text = "\(id)"
-//        self.colorLabel.text = "Color: \(color)"
-//        self.priceLabel.text = "$\(price)"
-//        self.statusLabel.text = status.uppercased()
-//        self.quantityLabel.text = "Quantity: \(quantity)"
-//        self.backgroundColor = UIColor.clear
-//        setupViews()
-//    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -567,8 +611,8 @@ class ShoppingItemCell: UICollectionViewCell {
         productInfoListView.addSubview(editButton)
         
         rightContainerView.addSubview(interactionContainerView)
-        interactionContainerView.addSubview(wishListButton)
-        interactionContainerView.addSubview(removeButton)
+        interactionContainerView.addSubview(moveToAnotherListButton)
+        interactionContainerView.addSubview(removeToAnotherListButton)
         
         addSubview(dividerLineView)
         
@@ -656,15 +700,15 @@ class ShoppingItemCell: UICollectionViewCell {
          interactionContainerView.bottomAnchor.constraint(equalTo: rightContainerView.bottomAnchor),
          interactionContainerView.widthAnchor.constraint(equalTo: productInfoListView.widthAnchor),
          
-         wishListButton.leftAnchor.constraint(equalTo: interactionContainerView.leftAnchor),
-         wishListButton.topAnchor.constraint(equalTo: interactionContainerView.topAnchor),
-         wishListButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-         wishListButton.widthAnchor.constraint(equalTo: interactionContainerView.widthAnchor, multiplier: 0.5),
+         moveToAnotherListButton.leftAnchor.constraint(equalTo: interactionContainerView.leftAnchor),
+         moveToAnotherListButton.topAnchor.constraint(equalTo: interactionContainerView.topAnchor),
+         moveToAnotherListButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+         moveToAnotherListButton.widthAnchor.constraint(equalTo: interactionContainerView.widthAnchor, multiplier: 0.5),
          
-         removeButton.rightAnchor.constraint(equalTo: interactionContainerView.rightAnchor),
-         removeButton.topAnchor.constraint(equalTo: interactionContainerView.topAnchor),
-         removeButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-         removeButton.widthAnchor.constraint(equalTo: interactionContainerView.widthAnchor, multiplier: 0.5)
+         removeToAnotherListButton.rightAnchor.constraint(equalTo: interactionContainerView.rightAnchor),
+         removeToAnotherListButton.topAnchor.constraint(equalTo: interactionContainerView.topAnchor),
+         removeToAnotherListButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+         removeToAnotherListButton.widthAnchor.constraint(equalTo: interactionContainerView.widthAnchor, multiplier: 0.5)
          
             ].forEach { (constraint) in
             constraint.isActive = true

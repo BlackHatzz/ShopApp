@@ -86,12 +86,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		152D048B239B466A00EA708A /* Other */ = {
+		152D048B239B466A00EA708A /* Others */ = {
 			isa = PBXGroup;
 			children = (
 				152D048C239B469C00EA708A /* PanDirectionGestureRecognizer.swift */,
 			);
-			path = Other;
+			path = Others;
 			sourceTree = "<group>";
 		};
 		15A91FCD22DD7F7200C6D86E = {
@@ -120,7 +120,7 @@
 				15C036B722E06D0E00AEA788 /* Models */,
 				15A91FEB22DD7FA700C6D86E /* controllers */,
 				15A91FF222DD87B500C6D86E /* Extensions */,
-				152D048B239B466A00EA708A /* Other */,
+				152D048B239B466A00EA708A /* Others */,
 				15A91FE022DD7F7300C6D86E /* Assets.xcassets */,
 				15A91FE222DD7F7300C6D86E /* LaunchScreen.storyboard */,
 				15A91FE522DD7F7300C6D86E /* Info.plist */,

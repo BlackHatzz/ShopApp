@@ -91,7 +91,7 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
 //        shoppingBagButton.setImage(UIImage(named: "shopping-bag128")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
         
         let shoppingBagImageView = UIImageView()
-        shoppingBagImageView.image = UIImage(named: "shopping-bag2.png")?.withRenderingMode(.alwaysOriginal)
+        shoppingBagImageView.image = UIImage(named: "shopping-bag")?.withRenderingMode(.alwaysOriginal)
         shoppingBagImageView.isUserInteractionEnabled = false
         shoppingBagButton.addSubview(shoppingBagImageView)
 

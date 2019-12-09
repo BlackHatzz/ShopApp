@@ -16,10 +16,12 @@ class Customer: NSObject {
     }
     
     var shoppingBag: [ShoppingItem]
+    var wishList: [ShoppingItem]
     
     init(firstName: String, lastName: String) {
         self.firstName = firstName
         self.lastName = lastName
         shoppingBag = [ShoppingItem]()
+        wishList = [ShoppingItem]()
     }
 }
