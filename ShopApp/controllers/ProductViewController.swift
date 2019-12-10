@@ -45,22 +45,32 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
                 self.collectionView.performBatchUpdates(nil) { (_) in
                     self.loadingView.activityIndicatorView.stopAnimating()
                     self.loadingView.removeFromSuperview()
-                    for (index, product) in products.enumerated() {
-//                        if let imageUrls = product.imageUrls {
-                            if !product.imageUrls.isEmpty {
-                                let imageUrlsList = product.imageUrls[0]
-                                let firstUrlImage = imageUrlsList![0]
-                                
-                                Product.loadImageFromStorage(fromURLString: firstUrlImage, completion: { (result: UIImage?) in
-//                                    product.images[index] = [0: result!]
-                                    products[index].images[0] = [0: result!]
-                                    self.collectionView.reloadData()
-                                })
+                    
+                    for product in products {
+                        product.loadFirstImage(completionHandler: {
+                            // reload data of collection view when load one image
+                            DispatchQueue.main.async {
+                                self.collectionView.reloadData()
                             }
-                        
-//                        }
-                        
+                        })
                     }
+                    
+//                    for (index, product) in products.enumerated() {
+////                        if let imageUrls = product.imageUrls {
+//                            if !product.imageUrls.isEmpty {
+//                                let imageUrlsList = product.imageUrls[0]
+//                                let firstUrlImage = imageUrlsList![0]
+//
+//                                Product.loadImageFromStorage(fromURLString: firstUrlImage, completion: { (result: UIImage?) in
+////                                    product.images[index] = [0: result!]
+//                                    products[index].images[0] = [0: result!]
+//                                    self.collectionView.reloadData()
+//                                })
+//                            }
+//
+////                        }
+//
+//                    }
                     
                 }
             }

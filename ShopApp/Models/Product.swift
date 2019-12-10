@@ -85,20 +85,62 @@ class Product: NSObject {
         static let textColors = "textColors"
     }
     
-    struct HexColor {
+    struct HexColorText {
         static let black = "#0F0F0F"
         static let ivory = "#E2D9CD"
         static let brown = "#7A5848"
     }
-    struct TextColor {
+    struct ColorText {
         static let black = "black"
         static let ivory = "ivory"
         static let brown = "brown"
     }
     
-    static func loadImageFromStorage(fromURLString imageUrl: String, completion: ((_ result: UIImage?) -> Void)?) {
+    @discardableResult
+    func loadFirstImage(completionHandler: (() -> Void)?) -> URLSessionDataTask? {
+        if !self.imageUrls.isEmpty {
+            let imageUrlsList = self.imageUrls[0]
+            let firstUrlImage = imageUrlsList![0]
+            
+            return Product.loadImageFromStorage(fromURLString: firstUrlImage, completion: { (result: UIImage?) in
+                self.images[0] = [0: result!]
+                
+                if let handler = completionHandler {
+                    handler()
+                }
+            })
+        }
+        return nil
+    }
+    
+    func loadOneImagesList(index: Int, handlerAfterLoadOneImage: ((_ index: Int) -> Void)?, completionHandler: (()-> Void)?) {
+        guard let imageUrls = self.imageUrls[index] else { return }
+        var tempImagesList = [Int: UIImage]()
+        
+        for (i, imageUrl) in imageUrls.enumerated() {
+            Product.loadImageFromStorage(fromURLString: imageUrl) { (result: UIImage?) in
+                tempImagesList[i] = result
+                self.images[index] = tempImagesList
+                
+                // do something after load one image
+                // argument is the index of loaded image
+                if let handler = handlerAfterLoadOneImage {
+                    handler(i)
+                }
+                
+                // so something after load all images
+                if i == imageUrls.count - 1 {
+                    if let handler = completionHandler {
+                        handler()
+                    }
+                }
+            }
+        }
+    }
+    @discardableResult
+    static func loadImageFromStorage(fromURLString imageUrl: String, completion: ((_ result: UIImage?) -> Void)?) -> URLSessionDataTask? {
         if let url = URL(string: imageUrl) {
-            URLSession.shared.dataTask(with: url) { (data, response, error) in
+             let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
                 if let error = error {
                     print("can not download image. Error is \(error)")
                 }
@@ -108,10 +150,14 @@ class Product: NSObject {
                             completion(UIImage(data: data)) // can be nil
                         }
                     }
+                } else {
+                    print("downloaded data is nil")
                 }
-            }.resume()
+            }
+            task.resume()
+            return task
         }
-        
+        return nil
     }
     
     static func loadImageFromStorage(fromURLStrings imageUrls: [String], handleEachResult: ((_ index: Int, _ result: UIImage) -> Void)?, completion: ((_ finalResult: [Int: UIImage]) -> Void)?) {

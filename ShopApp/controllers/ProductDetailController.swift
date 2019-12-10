@@ -332,16 +332,22 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                 
                 
                 self.productCollectionView.performBatchUpdates(nil, completion: { (_) in
-                    var temp = [Int: UIImage]()
-                    for (index, imageUrl) in product!.imageUrls[currentIndexProductImages]!.enumerated() {
-                        Product.loadImageFromStorage(fromURLString: imageUrl, completion: { (result: UIImage?) in
-                            temp[index] = result
-                            product!.images[currentIndexProductImages] = temp
-                            
-                            self.productCollectionView.statusCell[index] = ProductCollectionView.StatusCellKey.loaded
-                            self.productCollectionView.reloadData()
-                        })
-                    }
+                    
+                    product?.loadOneImagesList(index: currentIndexProductImages, handlerAfterLoadOneImage: { (index: Int) in
+                        self.productCollectionView.statusCell[index] = ProductCollectionView.StatusCellKey.loaded
+                        self.productCollectionView.reloadData()
+
+                    }, completionHandler: nil)
+//                    var temp = [Int: UIImage]()
+//                    for (index, imageUrl) in product!.imageUrls[currentIndexProductImages]!.enumerated() {
+//                        Product.loadImageFromStorage(fromURLString: imageUrl, completion: { (result: UIImage?) in
+//                            temp[index] = result
+//                            product!.images[currentIndexProductImages] = temp
+//
+//                            self.productCollectionView.statusCell[index] = ProductCollectionView.StatusCellKey.loaded
+//                            self.productCollectionView.reloadData()
+//                        })
+//                    }
                 })
                 
                 

@@ -22,8 +22,11 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
+    var productDataTask: URLSessionDataTask? = nil
     
-    private var searchResult: [(id: String, title: String, subtitle: String)] = [(String, String, String)]()
+//    private var searchResult: [(id: String, title: String, subtitle: String)] = [(String, String, String)]()
+    private var designerSearchResult: [(id: String, title: String, subtitle: String)] = [(String, String, String)]()
+    private var productSearchResult = [Product]()
     
     let searchResultStatusLabel: UILabel = {
         let label = UILabel()
@@ -53,8 +56,6 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         return view
     }()
     
-    
-    
 // ------------------------------------------------------------------------------
     
     override func viewDidLoad() {
@@ -76,8 +77,12 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         print("change text field:", sender.text as Any)
         
         // remove all searchResult when user change textField and remove collection view
-        searchResult.removeAll()
         DispatchQueue.main.async {
+            databaseRef.removeAllObservers()
+            self.productDataTask?.cancel()
+            self.productDataTask = nil
+            self.designerSearchResult.removeAll()
+            self.productSearchResult.removeAll()
             self.searchResultCollectionView.reloadData()
         }
         
@@ -96,34 +101,37 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         }
         print("search text", searchText)
         
-        // search by product
-        databaseRef.child("product").queryOrdered(byChild: "nameSearch").observe(DataEventType.value, with: { (snapshot) in
-            print("search result")
-            if let dictionary = snapshot.value as? [String: Any] {
-                // dictionary: id - product info
-                for key in dictionary.keys {
-                    // get produt info from id(key)
-                    if let product = dictionary[key] as? [String: Any] {
-                        print("product name:", product["name"] as Any)
-                        // get name product from nameSearch in database
-                        if let name = product[Product.InfoKey.nameSearch] as? String, let designer = product[Product.InfoKey.designer] as? String {
-                            // if name of product like searchText of user
-                            if name.contains(searchText) {
-                                self.searchResult.append((id: key, title: name, subtitle: designer))
+        // search by designers
+        databaseRef.child("product").queryOrdered(byChild: "designerSearch").observe(DataEventType.value, with: { (snapshot) in
+            DispatchQueue.main.async {
+                // remove previous data before get new data
+                self.designerSearchResult.removeAll()
+                self.searchResultCollectionView.reloadData()
+            
+                if let dictionary = snapshot.value as? [String: Any] {
+                    // dictionary: id - product info
+                    for key in dictionary.keys {
+                        // get produt info from id(key)
+                        if let productInfo = dictionary[key] as? [String: Any] {
+                            // get designer name
+                            if let designerSearch = productInfo["designerSearch"] as? String {
+                                if let designer = productInfo[Product.InfoKey.designer] as? String {
+                                    // if designer name contain searchText
+                                    if designerSearch.contains(searchText) {
+                                        self.designerSearchResult.append((id: key, title: designer, subtitle: "Designer"))
+                                        
+                                        DispatchQueue.main.async {
+                                            self.searchResultCollectionView.reloadData()
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                } //  iterate over dictionary
-                print("search result:", self.searchResult)
-                
-                // reload data
-                DispatchQueue.main.async {
-                    self.searchResultCollectionView.reloadData()
-                    databaseRef.removeAllObservers()
                 }
                 
                 // when search result is empty
-                if self.searchResult.isEmpty {
+                if self.productSearchResult.isEmpty && self.designerSearchResult.isEmpty {
                     self.searchResultStatusLabel.text = "NOT FOUND"
                     self.searchResultStatusLabel.isHidden = false
                     self.searchResultStatusLabelHeightConstraint?.constant = 20
@@ -134,11 +142,59 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
                     self.searchResultStatusLabelHeightConstraint?.constant = 1
                 }
                 
-            } // get value of snapshot
+            } // async queue
         }) { (error) in
             print(error.localizedDescription)
         }
         
+        // search by products
+        databaseRef.child("product").queryOrdered(byChild: "nameSearch").observe(DataEventType.value, with: { (snapshot) in
+            DispatchQueue.main.async {
+                // remove previous data before get new data
+                self.productSearchResult.removeAll()
+                self.searchResultCollectionView.reloadData()
+            
+                if let dictionary = snapshot.value as? [String: Any] {
+                    // dictionary: id - product info
+                    for key in dictionary.keys {
+                        // get produt info from id(key)
+                        if let productInfo = dictionary[key] as? [String: Any] {
+                            // get nameSearch to compare searchText
+                            if let nameSearch = productInfo["nameSearch"] as? String {
+                                if nameSearch.contains(searchText) {
+                                    // get product info
+                                    let searchedProduct = Product(id: key, productInfo: productInfo)
+                                    self.productSearchResult.append(searchedProduct)
+                                    
+                                    // get the first image
+                                    self.productDataTask = self.productSearchResult.last!.loadFirstImage(completionHandler: {
+                                        // reload data when downloaded image
+                                        DispatchQueue.main.async {
+                                            self.searchResultCollectionView.reloadData()
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    } //  iterate over dictionary
+                }
+                
+                // when search result is empty
+                if self.productSearchResult.isEmpty && self.designerSearchResult.isEmpty {
+                    self.searchResultStatusLabel.text = "NOT FOUND"
+                    self.searchResultStatusLabel.isHidden = false
+                    self.searchResultStatusLabelHeightConstraint?.constant = 20
+                } else {
+                    // if search result is not empty
+                    self.searchResultStatusLabel.text = nil
+                    self.searchResultStatusLabel.isHidden = true
+                    self.searchResultStatusLabelHeightConstraint?.constant = 1
+                }
+                
+            } // async queue
+        }) { (error) in
+            print(error.localizedDescription)
+        }
     } // textFieldDidChange
 
 // ------------------------------------------------------------------------------
@@ -152,8 +208,6 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
     }
     
     private func setupView() {
-        let navbarHeight = UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height
-        
         view.addSubview(containerView)
         
         view.addConstraints(withFormat: "H:|-12-[v0]-12-|", views: containerView)
@@ -178,11 +232,6 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         searchResultCollectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         searchResultCollectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         searchResultCollectionView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
-        
-//        containerView.addConstraints(withFormat: "H:|[v0]|", views: searchBar)
-//        containerView.addConstraints(withFormat: "H:|[v0]|", views: searchResultStatusLabel)
-//        containerView.addConstraints(withFormat: "H:|[v0]|", views: searchResultCollectionView)
-//        containerView.addConstraints(withFormat: "V:|[v0(40)]-12-[v1(20)][v2]|", views: searchBar, searchResultStatusLabel, searchResultCollectionView)
     }
     
     
@@ -196,17 +245,36 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         return CGSize(width: searchResultCollectionView.frame.width, height: 40)
     }
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        // 1 for search designers and 1 for search products
+        return 2
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return searchResult.count
+        print("co", designerSearchResult, productSearchResult)
+        if section == 0 {
+            return designerSearchResult.count
+        }
+        return productSearchResult.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! SearchResultCollectionViewCell
         cell.imageView.image = UIImage(named: "searchBarIcon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
-        cell.title.text = searchResult[indexPath.row].title
-        cell.subtitle.text = searchResult[indexPath.row].subtitle
         
-//        cell.backgroundColor = (indexPath.row % 2 == 0) ? UIColor.red : UIColor.green
+        if indexPath.section == 0 {
+            // search result is designers
+            cell.imageViewCellType = .searchIcon
+            
+            cell.title.text = designerSearchResult[indexPath.row].title
+            cell.subtitle.text = designerSearchResult[indexPath.row].subtitle
+        } else {
+            // serch result is products
+            cell.imageViewCellType = .product
+            
+            cell.title.text = productSearchResult[indexPath.row].name
+            cell.subtitle.text = productSearchResult[indexPath.row].designer
+        }
         
         return cell
     }
@@ -280,6 +348,24 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         subtitle.text = nil
     }
     
+    enum ImageViewCellType {
+        case searchIcon
+        case product
+    }
+    var imageViewCellType = ImageViewCellType.searchIcon {
+        didSet {
+            switch imageViewCellType {
+            case .searchIcon:
+                imageView.image = UIImage(named: "searchBarIcon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
+                imageView.tintColor = UIColor(white: 0.7, alpha: 1)
+            case .product:
+                imageView.image = nil
+                imageView.backgroundColor = UIColor.red
+            }
+        }
+    }
+    
+    
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "searchBarIcon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
@@ -287,7 +373,6 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = UIImageView.ContentMode.scaleAspectFill
 //        imageView.backgroundColor = UIColor.blue
-        print("heeeee")
         return imageView
     }()
     let title: UILabel = {
