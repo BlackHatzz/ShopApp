@@ -450,9 +450,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         productCollectionView.dataSource = self
         productCollectionView.register(SlideProductCell.self, forCellWithReuseIdentifier: cellId)
         
+        sizeCollectionView.productSizes = product?.sizes ?? [String]()
         setupViews()
         self.addToBagButton.addTarget(self, action: #selector(handleAddToBag), for: UIControl.Event.touchUpInside)
-        sizeCollectionView.productSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12", "UK 13"]
+        
+//        sizeCollectionView.productSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12", "UK 13"]
     }
     
     func changeNotificationLabelStatus(withContent content: String, isHidden: Bool) {
@@ -480,15 +482,8 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
     
     @objc func handleAddToBag(_ sender: UIButton) {
         print("add to bag")
-        if self.sizeCollectionView.selectedSize == nil {
+        if self.sizeCollectionView.selectedSize == nil && product?.sizes != nil {
             print("no size")
-            
-//            notificationLabel.text = "Please select a size"
-//            notificationLabel.backgroundColor = UIColor.rgb(204, 152, 159)
-//            UIView.animate(withDuration: 0.2) {
-//                self.notificationLabelHeightConstraint?.constant = 20
-//                self.view.layoutIfNeeded()
-//            }
             if notificationLabel.isHidden {
                 changeNotificationLabelStatus(withContent: "Please select a size", isHidden: false)
             } else {
@@ -497,7 +492,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             
         } else {
             print("size")
-            
             
             if let product = product {
                 // change notification label
@@ -512,13 +506,21 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                 let image: UIImage = product.images[currentIndexProductImages]![0]!
                 let designer: String = product.designer!
                 let name: String = product.name!
-                let size: String = self.sizeCollectionView.selectedSize!
+                
+                // if product only has 1 specific size
+                var size: String = "--"
+                if product.sizes != nil {
+                    // if product has many sizes
+                    size = self.sizeCollectionView.selectedSize!
+                }
+                
                 let color: String = product.textColors![currentIndexProductImages]
                 let price: NSNumber = product.price!
+                let discount: NSNumber = product.discount!
                 let status: String = product.status!
                 let quantity: NSNumber = product.quantity
                 
-                let shoppingItem = ShoppingItem(id: id, image: image, designer: designer, name: name, size: size, color: color, price: price, status: status, quantity: quantity)
+                let shoppingItem = ShoppingItem(id: id, image: image, designer: designer, name: name, size: size, color: color, price: price, discount: discount, status: status, quantity: quantity)
                 customer.shoppingBag.append(shoppingItem)
                 print("shoppingItem:")
                 dump(shoppingItem)
@@ -540,6 +542,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnSwipe = true
+        navigationController?.isNavigationBarHidden = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -571,7 +574,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             if !hexColors.isEmpty {
                 self.colorMenu.hexColorsList = hexColors
                 
-                
                 self.colorMenu.reloadData()
                 
                 self.colorMenu.performBatchUpdates(nil) { (_) in
@@ -583,7 +585,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                     }
                     
                 }
+            } else {
+                self.colorTitleLabel.text = nil
             }
+        } else {
+            self.colorTitleLabel.text = nil
         }
         
         if let status = product.status {
@@ -718,14 +724,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         productContainerView.addConstraints(withFormat: "H:|[v0(v2)][v1(1)][v2]|", views: callUsButton, dividerLineView2, emailUsButton)
         productContainerView.addConstraints(withFormat: "H:|[v0]|", views: dividerLineView3)
         
-        productContainerView.addConstraints(withFormat: "V:|-8-[v0(\(nameEstimatedSizeForNameLabel.height))]-8-[v1(400)]-4-[v2(14)]-12-[v3(40)]-14-[v4(22)]-8-[v5(20)]", views: productNameLabel, productCollectionView, productPageControl, colorMenu, discountPriceLabel, olddiscountPriceLabel)
-        productContainerView.addConstraints(withFormat: "V:[v0]-12-[v1(40)]", views: productPageControl, colorTitleLabel)
+        productContainerView.addConstraints(withFormat: "V:|-8-[v0(\(nameEstimatedSizeForNameLabel.height))]-8-[v1(400)]-4-[v2(14)]-12-[v3(\(product?.hexColors == nil ? 1 : 40))]-14-[v4(22)]-8-[v5(20)]", views: productNameLabel, productCollectionView, productPageControl, colorMenu, discountPriceLabel, olddiscountPriceLabel)
+        productContainerView.addConstraints(withFormat: "V:[v0]-12-[v1(\(product?.hexColors == nil ? 1 : 40))]", views: productPageControl, colorTitleLabel)
         productContainerView.addConstraints(withFormat: "V:[v0]-8-[v1(20)]", views: discountPriceLabel, discountLabel)
         
-        productContainerView.addConstraints(withFormat: "V:[v0]-18-[v1(40)]-18-[v2(16)]-18-[v3(44)]-12-[v4(44)]-24-[v5(\(estimatedSize1.height))]-36-[v6(18)]-12-[v7(18)]-12-[v8(18)]-24-[v9(\(estimatedSize2.height))]-36-[v10(1)][v11(80)][v12(1)]", views: olddiscountPriceLabel, sizeCollectionView, productStatusLabel, addToBagButton, addToWishListButton, productDetailInfo, productCompositionLabel, productCodeLabel, productColorLabel, productSizeAndFitInfo, dividerLineView1, callUsButton, dividerLineView3)
-//        productContainerView.addConstraints(withFormat: "V:[v0]-18-[v1(16)]-18-[v2(44)]-12-[v3(44)]-24-[v4(\(estimatedSize1.height))]-36-[v5(18)]-12-[v6(18)]-12-[v7(18)]-24-[v8(\(estimatedSize2.height))]-36-[v9(1)][v10(80)][v11(1)]", views: olddiscountPriceLabel, productStatusLabel, addToBagButton, addToWishListButton, productDetailInfo, productCompositionLabel, productCodeLabel, productColorLabel, productSizeAndFitInfo, dividerLineView1, callUsButton, dividerLineView3)
-        
-        
+        productContainerView.addConstraints(withFormat: "V:[v0]-18-[v1(\(product?.sizes == nil ? 1 : 40))]-18-[v2(16)]-18-[v3(44)]-12-[v4(44)]-24-[v5(\(estimatedSize1.height))]-36-[v6(18)]-12-[v7(18)]-12-[v8(18)]-24-[v9(\(estimatedSize2.height))]-36-[v10(1)][v11(80)][v12(1)]", views: olddiscountPriceLabel, sizeCollectionView, productStatusLabel, addToBagButton, addToWishListButton, productDetailInfo, productCompositionLabel, productCodeLabel, productColorLabel, productSizeAndFitInfo, dividerLineView1, callUsButton, dividerLineView3)
         
         productContainerView.addConstraints(withFormat: "V:[v0][v1(80)]", views: dividerLineView1, emailUsButton)
         productContainerView.addConstraints(withFormat: "V:[v0]-12-[v1]-12-[v2]", views: dividerLineView1, dividerLineView2, dividerLineView3)

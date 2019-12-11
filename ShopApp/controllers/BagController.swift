@@ -9,7 +9,6 @@
 import UIKit
 
 private let cellId = "bagCellId"
-var shoppingBag = [Product]()
 
 class BagController: UIViewController {
     
@@ -28,6 +27,19 @@ class BagController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
+    var statusListLabel: UILabel? = nil // notify status of collectionView in shoppingBag or wishList is empty or not
+//        = {
+//
+//        let label = UILabel()
+////        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.font = UIFont.helvetica(ofsize: 22)
+//        label.textAlignment = NSTextAlignment.center
+//        label.textColor = UIColor.init(white: 0.5, alpha: 1)
+//        label.layer.zPosition = 1
+//        label.backgroundColor = UIColor.clear
+//        label.text = "Your Bag is Empty"
+//        return label
+//    }()
     
     let shoppingCollectionView: ShoppingCollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -47,6 +59,20 @@ class BagController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
         
+        if customer.shoppingBag.isEmpty {
+            statusListLabel = UILabel()
+            
+            statusListLabel!.font = UIFont.helvetica(ofsize: 22)
+            statusListLabel!.textAlignment = NSTextAlignment.center
+            statusListLabel!.textColor = UIColor.init(white: 0.5, alpha: 1)
+            statusListLabel!.layer.zPosition = 1
+            statusListLabel!.backgroundColor = UIColor.clear
+            statusListLabel!.text = "Your Bag is Empty"
+
+            view.addSubview(statusListLabel!)
+            statusListLabel!.frame = CGRect(x: 0, y: 0, width: view.frame.width - 20, height: 30)
+            statusListLabel!.center = CGPoint(x: view.center.x, y: 30)
+        }
         setupViews()
         
         // set dataList in collection view
@@ -58,12 +84,14 @@ class BagController: UIViewController {
         shoppingCollectionView.didHandleMoveItem = {(movedItem: ShoppingItem, index: Int) -> Void in
             customer.shoppingBag.remove(at: index)
             customer.wishList.append(movedItem)
+            self.check(shoppingList: customer.shoppingBag, withTitle: "Your Bag is Empty")
         }
         
         // after remove an item of dataList in shoppingCollectionView
         // also remove an item in shoppingBag
         shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
             customer.shoppingBag.remove(at: index)
+            self.check(shoppingList: customer.shoppingBag, withTitle: "Your Bag is Empty")
         }
         
         // set handler for segmentedControl
@@ -122,9 +150,35 @@ class BagController: UIViewController {
         scrollView.contentSize.height = containerView.frame.height
     }
     
+    // check empty or not
+    private func check(shoppingList: [ShoppingItem], withTitle title: String?) {
+        if shoppingList.isEmpty {
+            if statusListLabel == nil {
+                statusListLabel = UILabel()
+                
+                statusListLabel!.font = UIFont.helvetica(ofsize: 22)
+                statusListLabel!.textAlignment = NSTextAlignment.center
+                statusListLabel!.textColor = UIColor.init(white: 0.5, alpha: 1)
+                statusListLabel!.layer.zPosition = 1
+                statusListLabel!.backgroundColor = UIColor.clear
+                
+                view.addSubview(statusListLabel!)
+                statusListLabel!.frame = CGRect(x: 0, y: 0, width: view.frame.width - 20, height: 30)
+                statusListLabel!.center = CGPoint(x: view.center.x, y: 30)
+            }
+                statusListLabel!.text = title
+        } else {
+            statusListLabel?.removeFromSuperview()
+            statusListLabel = nil
+        }
+    }
+    
     @objc private func handleSegmentedControl(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
-        case 0:
+        case 0: // shopping bag
+            // check shopping bag is empty or not
+            check(shoppingList: customer.shoppingBag, withTitle: "Your Bag is Empty")
+            
             // shopping bag
             shoppingCollectionView.dataList = customer.shoppingBag
             
@@ -134,12 +188,14 @@ class BagController: UIViewController {
             shoppingCollectionView.didHandleMoveItem = {(movedItem: ShoppingItem, index: Int) -> Void in
                 customer.shoppingBag.remove(at: index)
                 customer.wishList.append(movedItem)
+                self.check(shoppingList: customer.shoppingBag, withTitle: "Your Bag is Empty")
             }
             
             // after remove an item of dataList in shoppingCollectionView
             // also remove an item in shoppingBag
             shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
                 customer.shoppingBag.remove(at: index)
+                self.check(shoppingList: customer.shoppingBag, withTitle: "Your bag is Empty")
             }
             
             // change button type
@@ -149,7 +205,10 @@ class BagController: UIViewController {
             DispatchQueue.main.async {
                 self.shoppingCollectionView.reloadData()
             }
-        case 1:
+        case 1: // wish list
+            // check wish list is empty or not
+            check(shoppingList: customer.wishList, withTitle: "Your Wishlist is Empty")
+            
             // wish list
             shoppingCollectionView.dataList = customer.wishList
             
@@ -159,12 +218,14 @@ class BagController: UIViewController {
             shoppingCollectionView.didHandleMoveItem = {(movedItem: ShoppingItem, index: Int) -> Void in
                 customer.wishList.remove(at: index)
                 customer.shoppingBag.append(movedItem)
+                self.check(shoppingList: customer.wishList, withTitle: "Your Wishlist is Empty")
             }
             
             // after remove an item of dataList in shoppingCollectionView
             // also remove an item in wishList
             shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
                 customer.wishList.remove(at: index)
+                self.check(shoppingList: customer.wishList, withTitle: "Your Wishlist is Empty")
             }
             
             // change button type
@@ -220,7 +281,7 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
         cell.sizeLabel.text = "Size: \(item.size)"
         cell.codeLabel.text = "Code: \(item.id)"
         cell.colorLabel.text = "Color: \(item.color)"
-        cell.priceLabel.text = "$\(item.price)"
+        cell.priceLabel.text = "$\(item.discountPrice)"
         cell.statusLabel.text = item.status.uppercased()
         cell.quantityLabel.text = "Quantity: \(item.quantity)"
         
@@ -241,6 +302,7 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
         
         return cell
     }
+    
     
     @objc private func handlemoveToAnotherListButton(_ sender: UIButton) {
         // move to wishList and delete item in shoppingBag

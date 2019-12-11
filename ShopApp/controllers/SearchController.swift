@@ -42,11 +42,12 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
     
     let searchResultCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 4
+        layout.minimumLineSpacing = 10
         layout.scrollDirection = UICollectionView.ScrollDirection.vertical
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.backgroundColor = UIColor.clear
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.alwaysBounceVertical = true
         return collectionView
     }()
     
@@ -218,19 +219,19 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         containerView.addSubview(searchResultCollectionView)
         
         searchBar.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        searchBar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        searchBar.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        searchBar.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         searchBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
         searchResultStatusLabel.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 12).isActive = true
-        searchResultStatusLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        searchResultStatusLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        searchResultStatusLabel.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        searchResultStatusLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         searchResultStatusLabelHeightConstraint = searchResultStatusLabel.heightAnchor.constraint(equalToConstant: 1)
         searchResultStatusLabelHeightConstraint?.isActive = true
         
         searchResultCollectionView.topAnchor.constraint(equalTo: searchResultStatusLabel.bottomAnchor).isActive = true
-        searchResultCollectionView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        searchResultCollectionView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        searchResultCollectionView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        searchResultCollectionView.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         searchResultCollectionView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
     }
     
@@ -242,12 +243,22 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
 // ---------------------------------------------------------------
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: searchResultCollectionView.frame.width, height: 40)
+        if indexPath.section == 0 {
+            return CGSize(width: searchResultCollectionView.frame.width, height: 40)
+        }
+        return CGSize(width: searchResultCollectionView.frame.width, height: 60)
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         // 1 for search designers and 1 for search products
         return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        if section == 0 {
+            return UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
+        }
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -262,6 +273,8 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! SearchResultCollectionViewCell
         cell.imageView.image = UIImage(named: "searchBarIcon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
         
+        cell.removeTopLineLayer()
+        
         if indexPath.section == 0 {
             // search result is designers
             cell.imageViewCellType = .searchIcon
@@ -272,16 +285,23 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
             // serch result is products
             cell.imageViewCellType = .product
             
+            cell.imageView.image = productSearchResult[indexPath.row].images[0]?[0]
             cell.title.text = productSearchResult[indexPath.row].name
             cell.subtitle.text = productSearchResult[indexPath.row].designer
+            
+            if indexPath.row == 0 && indexPath.section == 1 {
+                cell.addTopLineLayer()
+//                let topLineLayer = CALayer()
+//                topLineLayer.backgroundColor = UIColor.gray.cgColor
+//                topLineLayer.frame = CGRect(x: 0, y: 0, width: self.searchResultCollectionView.frame.width, height: 1)
+//
+//                cell.layer.addSublayer(topLineLayer)
+            }
         }
         
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
-    }
 // ---------------------------------------------------------------------------
     
 }
@@ -325,12 +345,12 @@ class SearchBar: UIView {
         addSubview(textField)
         
         iconImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
-        iconImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10).isActive = true
+        iconImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10).isActive = true
         iconImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
         iconImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
         
-        textField.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 12).isActive = true
-        textField.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        textField.leftAnchor.constraint(equalTo: iconImageView.rightAnchor, constant: 12).isActive = true
+        textField.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         textField.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         textField.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
@@ -358,13 +378,64 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
             case .searchIcon:
                 imageView.image = UIImage(named: "searchBarIcon")?.withRenderingMode(UIImage.RenderingMode.alwaysTemplate)
                 imageView.tintColor = UIColor(white: 0.7, alpha: 1)
+                
+                imageViewTopLayoutConstraint.isActive = false
+                imageViewLeftLayoutConstraint.isActive = false
+                imageViewRightLayoutConstraint.isActive = false
+                imageViewBottomLayoutConstraint.isActive = false
+                
+                imageViewTopLayoutConstraint.constant = 10
+                imageViewLeftLayoutConstraint.constant = 10
+                imageViewRightLayoutConstraint.constant = -10
+                imageViewBottomLayoutConstraint.constant = 20
+                
+                imageViewTopLayoutConstraint.isActive = true
+                imageViewLeftLayoutConstraint.isActive = true
+                imageViewRightLayoutConstraint.isActive = true
+                imageViewBottomLayoutConstraint.isActive = true
+                
             case .product:
                 imageView.image = nil
-                imageView.backgroundColor = UIColor.red
+                
+                imageViewTopLayoutConstraint.isActive = false
+                imageViewLeftLayoutConstraint.isActive = false
+                imageViewRightLayoutConstraint.isActive = false
+                imageViewBottomLayoutConstraint.isActive = false
+                
+                imageViewTopLayoutConstraint.constant = 5
+                imageViewLeftLayoutConstraint.constant = 5
+                imageViewRightLayoutConstraint.constant = -5
+                imageViewBottomLayoutConstraint.constant = 30
+                
+                imageViewTopLayoutConstraint.isActive = true
+                imageViewLeftLayoutConstraint.isActive = true
+                imageViewRightLayoutConstraint.isActive = true
+                imageViewBottomLayoutConstraint.isActive = true
             }
         }
     }
     
+    let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.clear
+        return view
+    }()
+    
+    private let topLineLayer: CALayer = {
+        let layer = CALayer()
+        layer.backgroundColor = UIColor(white: 0.7, alpha: 1).cgColor
+        return layer
+    }()
+    
+    func addTopLineLayer() {
+        containerView.layer.addSublayer(topLineLayer)
+        topLineLayer.frame = CGRect(x: 0, y: -5, width: self.frame.width * 0.9, height: 1)
+        topLineLayer.position = CGPoint(x: self.frame.width/2, y: -5)
+    }
+    func removeTopLineLayer() {
+        topLineLayer.removeFromSuperlayer()
+    }
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -372,8 +443,21 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         imageView.tintColor = UIColor(white: 0.7, alpha: 1)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = UIImageView.ContentMode.scaleAspectFill
-//        imageView.backgroundColor = UIColor.blue
+        imageView.backgroundColor = UIColor.clear
         return imageView
+    }()
+    
+    private var imageViewTopLayoutConstraint: NSLayoutConstraint!
+    private var imageViewLeftLayoutConstraint: NSLayoutConstraint!
+    private var imageViewRightLayoutConstraint: NSLayoutConstraint!
+    private var imageViewBottomLayoutConstraint: NSLayoutConstraint!
+    
+    
+    let titleContainerView: UIView = {
+        let stackView = UIStackView()
+        stackView.backgroundColor = UIColor.yellow
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
     }()
     let title: UILabel = {
         let label = UILabel()
@@ -381,6 +465,7 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         label.text = "test products"
 //        label.backgroundColor = UIColor.yellow
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor.clear
         return label
     }()
     let subtitle: UILabel = {
@@ -389,6 +474,7 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         label.font = UIFont.helvetica(ofsize: 14)
         label.textColor = UIColor.gray
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor.clear
         return label
     }()
     
@@ -398,24 +484,43 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         backgroundColor = UIColor.clear
         
         // setup views
-        addSubview(imageView)
-        addSubview(title)
-        addSubview(subtitle)
+        addSubview(containerView)
         
-        imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
-        imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10).isActive = true
-        imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        containerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         
-        title.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 12).isActive = true
-        title.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        title.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        title.bottomAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        containerView.addSubview(imageView)
+        containerView.addSubview(titleContainerView)
         
-        subtitle.topAnchor.constraint(equalTo: title.bottomAnchor).isActive = true
-        subtitle.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 12).isActive = true
-        subtitle.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        subtitle.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        titleContainerView.addSubview(title)
+        titleContainerView.addSubview(subtitle)
+        
+        imageViewTopLayoutConstraint = imageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 10)
+        imageViewLeftLayoutConstraint = imageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 10)
+        imageViewRightLayoutConstraint = imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10)
+        imageViewBottomLayoutConstraint = imageView.widthAnchor.constraint(equalToConstant: 20)
+        
+        imageViewTopLayoutConstraint.isActive = true
+        imageViewLeftLayoutConstraint.isActive = true
+        imageViewRightLayoutConstraint.isActive = true
+        imageViewBottomLayoutConstraint.isActive = true
+        
+        titleContainerView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        titleContainerView.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 12).isActive = true
+        titleContainerView.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        titleContainerView.heightAnchor.constraint(equalToConstant: 41).isActive = true
+        
+        title.leftAnchor.constraint(equalTo: titleContainerView.leftAnchor).isActive = true
+        title.rightAnchor.constraint(equalTo: titleContainerView.rightAnchor).isActive = true
+        title.topAnchor.constraint(equalTo: titleContainerView.topAnchor).isActive = true
+        title.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        subtitle.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 5).isActive = true
+        subtitle.leftAnchor.constraint(equalTo: titleContainerView.leftAnchor).isActive = true
+        subtitle.rightAnchor.constraint(equalTo: titleContainerView.rightAnchor).isActive = true
+        subtitle.bottomAnchor.constraint(equalTo: titleContainerView.bottomAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
