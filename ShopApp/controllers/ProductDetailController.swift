@@ -131,6 +131,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         button.backgroundColor = UIColor.black
         button.titleLabel?.font = UIFont.helveticaNeue(ofsize: 16)
         button.setTitleColor(UIColor.white, for: UIControl.State.normal)
+        button.tag = 1
         return button
     }()
     let addToWishListButton: UIButton = {
@@ -140,6 +141,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         button.titleLabel?.font = UIFont.helveticaNeue(ofsize: 16)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.init(white: 0.75, alpha: 1).cgColor
+        button.tag = 2
         return button
     }()
     let productDetailInfo = ProductDetailInfo(withTitle: "Product Detail", infoText: "")
@@ -453,6 +455,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         sizeCollectionView.productSizes = product?.sizes ?? [String]()
         setupViews()
         self.addToBagButton.addTarget(self, action: #selector(handleAddToBag), for: UIControl.Event.touchUpInside)
+        self.addToWishListButton.addTarget(self, action: #selector(handleAddToBag(_:)), for: UIControl.Event.touchUpInside)
         
 //        sizeCollectionView.productSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12", "UK 13"]
     }
@@ -481,6 +484,18 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
     }
     
     @objc func handleAddToBag(_ sender: UIButton) {
+        // tag == 1: add to bag
+        // tag == 2: add to wishlist
+        var addedBagName: String? = nil
+        var bagType: Customer.BagType? = nil
+        if sender.tag == 1 {
+            addedBagName = "Bag"
+            bagType = .shoppingBag
+        } else {
+            addedBagName = "Wishlist"
+            bagType = .wishList
+        }
+        
         print("add to bag")
         if self.sizeCollectionView.selectedSize == nil && product?.sizes != nil {
             print("no size")
@@ -496,12 +511,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
             if let product = product {
                 // change notification label
                 if notificationLabel.isHidden {
-                    changeNotificationLabelStatus(withContent: "Added to bag", isHidden: false)
+                    changeNotificationLabelStatus(withContent: "Added to \(addedBagName!)", isHidden: false)
                 } else {
-                    notificationLabel.text = "Added to bag"
+                    notificationLabel.text = "Added to \(addedBagName!)"
                 }
                 
-                // get init values of product
                 let id: String = product.id
                 let image: UIImage = product.images[currentIndexProductImages]![0]!
                 let designer: String = product.designer!
@@ -518,20 +532,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                 let price: NSNumber = product.price!
                 let discount: NSNumber = product.discount!
                 let status: String = product.status!
-                let quantity: NSNumber = product.quantity
+                let quantity: NSNumber = 1
                 
                 let shoppingItem = ShoppingItem(id: id, image: image, designer: designer, name: name, size: size, color: color, price: price, discount: discount, status: status, quantity: quantity)
-                customer.shoppingBag.append(shoppingItem)
-                print("shoppingItem:")
-                dump(shoppingItem)
-//                self.id = id
-//                self.designer = designer
-//                self.name = name
-//                self.size = size
-//                self.color = color
-//                self.price = price
-//                self.status = status
-//                self.quantity = quantity
+                customer.add(to: bagType!, withItem: shoppingItem)
+                
             } else {
                 assertionFailure("product cannot be nil")
             }

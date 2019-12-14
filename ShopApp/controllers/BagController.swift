@@ -28,18 +28,6 @@ class BagController: UIViewController {
         return scrollView
     }()
     var statusListLabel: UILabel? = nil // notify status of collectionView in shoppingBag or wishList is empty or not
-//        = {
-//
-//        let label = UILabel()
-////        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont.helvetica(ofsize: 22)
-//        label.textAlignment = NSTextAlignment.center
-//        label.textColor = UIColor.init(white: 0.5, alpha: 1)
-//        label.layer.zPosition = 1
-//        label.backgroundColor = UIColor.clear
-//        label.text = "Your Bag is Empty"
-//        return label
-//    }()
     
     let shoppingCollectionView: ShoppingCollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -92,6 +80,13 @@ class BagController: UIViewController {
         shoppingCollectionView.didRemoveItem = {(index: Int) -> Void in
             customer.shoppingBag.remove(at: index)
             self.check(shoppingList: customer.shoppingBag, withTitle: "Your Bag is Empty")
+        }
+        
+        // when pressed checkout button
+        shoppingCollectionView.didTouchUpInSideCheckoutButton = {() -> Void in
+            let viewController = CheckoutController()
+            let navController = UINavigationController(rootViewController: viewController)
+            self.navigationController?.present(navController, animated: true, completion: nil)
         }
         
         // set handler for segmentedControl
@@ -258,6 +253,7 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
     
     var didHandleMoveItem: ((_ movedItem: ShoppingItem, _ index: Int) -> Void)? = nil
     var didRemoveItem: ((_ index: Int) -> Void)? = nil
+    var didTouchUpInSideCheckoutButton: (() -> Void)? = nil
     
     enum MoveToAnotherListButtonType {
         case shoppingBag
@@ -266,43 +262,69 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
     var moveToAnotherListButtonType = MoveToAnotherListButtonType.shoppingBag
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataList.count
+        if section == 0 { return dataList.count }
+        return 1
+    }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 2
     }
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingCollectionView.cellId, for: indexPath) as! ShoppingItemCell
+        var shoppingItemCell: ShoppingItemCell! = nil
+        var priceItemCell: PriceItemCell! = nil
         
-        let item = dataList[indexPath.row]
-        cell.productImageView.image = item.image
-        cell.designerLabel.text = item.designer
-        cell.productNameLabel.text = item.name
-        cell.sizeLabel.text = "Size: \(item.size)"
-        cell.codeLabel.text = "Code: \(item.id)"
-        cell.colorLabel.text = "Color: \(item.color)"
-        cell.priceLabel.text = "$\(item.discountPrice)"
-        cell.statusLabel.text = item.status.uppercased()
-        cell.quantityLabel.text = "Quantity: \(item.quantity)"
-        
-        switch moveToAnotherListButtonType {
-        case .shoppingBag:
-            cell.moveToAnotherListButton.iconImageView.image = UIImage(named: "heart")
-            cell.moveToAnotherListButton.label.text = "Move to Wish List"
-        case .wishList:
-            cell.moveToAnotherListButton.iconImageView.image = UIImage(named: "shopping-bag")
-            cell.moveToAnotherListButton.label.text = "Move to Bag"
+        if indexPath.section == 0 {
+            register(ShoppingItemCell.self, forCellWithReuseIdentifier: ShoppingCollectionView.cellId)
+            shoppingItemCell = collectionView.dequeueReusableCell(withReuseIdentifier: ShoppingCollectionView.cellId, for: indexPath) as? ShoppingItemCell
+
+            let item = dataList[indexPath.row]
+            shoppingItemCell.productImageView.image = item.image
+            shoppingItemCell.designerLabel.text = item.designer
+            shoppingItemCell.productNameLabel.text = item.name
+            shoppingItemCell.sizeLabel.text = "Size: \(item.size)"
+            shoppingItemCell.codeLabel.text = "Code: \(item.id)"
+            shoppingItemCell.colorLabel.text = "Color: \(item.color)"
+            shoppingItemCell.priceLabel.text = "$\(item.discountPrice)"
+            shoppingItemCell.statusLabel.text = item.status.uppercased()
+            shoppingItemCell.quantityLabel.text = "Quantity: \(item.quantity)"
+
+            switch moveToAnotherListButtonType {
+            case .shoppingBag:
+                shoppingItemCell.moveToAnotherListButton.iconImageView.image = UIImage(named: "heart")
+                shoppingItemCell.moveToAnotherListButton.label.text = "Move to Wish List"
+            case .wishList:
+                shoppingItemCell.moveToAnotherListButton.iconImageView.image = UIImage(named: "shopping-bag")
+                shoppingItemCell.moveToAnotherListButton.label.text = "Move to Bag"
+            }
+
+            shoppingItemCell.moveToAnotherListButton.tag = indexPath.row
+            shoppingItemCell.moveToAnotherListButton.addTarget(self, action: #selector(handlemoveToAnotherListButton(_:)), for: UIControl.Event.touchUpInside)
+
+            shoppingItemCell.removeToAnotherListButton.tag = indexPath.row
+            shoppingItemCell.removeToAnotherListButton.addTarget(self, action: #selector(handleRemoveItem), for: UIControl.Event.touchUpInside)
+
+            return shoppingItemCell
+        } else if indexPath.section == 1 {
+            register(PriceItemCell.self, forCellWithReuseIdentifier: "abc")
+            priceItemCell = collectionView.dequeueReusableCell(withReuseIdentifier: "abc", for: indexPath) as? PriceItemCell
+            
+            priceItemCell.checkoutButton.addTarget(self, action: #selector(handleCheckout), for: UIControl.Event.touchUpInside)
+            
+            return priceItemCell
         }
-
-        cell.moveToAnotherListButton.tag = indexPath.row
-        cell.moveToAnotherListButton.addTarget(self, action: #selector(handlemoveToAnotherListButton(_:)), for: UIControl.Event.touchUpInside)
-
-        cell.removeToAnotherListButton.tag = indexPath.row
-        cell.removeToAnotherListButton.addTarget(self, action: #selector(handleRemoveItem), for: UIControl.Event.touchUpInside)
-        
-        return cell
+    
+        assertionFailure()
+        return UICollectionViewCell()
     }
     
+    @objc private func handleCheckout() {
+        if let handle = didTouchUpInSideCheckoutButton {
+            handle()
+        }
+    }
     
     @objc private func handlemoveToAnotherListButton(_ sender: UIButton) {
         // move to wishList and delete item in shoppingBag
@@ -348,7 +370,10 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.frame.width, height: 300)
+        if indexPath.section == 0 {
+            return CGSize(width: self.frame.width, height: 300)
+        }
+        return CGSize(width: self.frame.width, height: 150)
     }
 
     
@@ -683,7 +708,7 @@ class ShoppingItemCell: UICollectionViewCell {
          // from bottom to top
          dividerLineView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
          dividerLineView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
-         dividerLineView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 12),
+         dividerLineView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -12),
          dividerLineView.heightAnchor.constraint(equalToConstant: 1),
             
          // from top to bottom
@@ -786,6 +811,7 @@ fileprivate class InteractionButton: UIButton {
         view.isUserInteractionEnabled = false
         return view
     }()
+    
     let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -840,4 +866,89 @@ fileprivate class InteractionButton: UIButton {
     }
 }
 
+class PriceItemCell: UICollectionViewCell {
+    
+    let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let topLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = NSTextAlignment.center
+        label.font = UIFont.helvetica(ofsize: 14)
+        label.text = "Order Summary"
+        return label
+    }()
+    
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.helveticaBold(ofsize: 14)
+        label.text = "Total: "
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let priceLabel: UILabel = {
+        let label = UILabel()
+        label.text = "$\(customer.getShoppingBagTotalPrice())"
+        label.font = UIFont.helvetica(ofsize: 14)
+        label.textAlignment = NSTextAlignment.right
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let checkoutButton: UIButton = {
+        let button = UIButton(type: UIButton.ButtonType.system)
+        button.setTitle("Checkout", for: UIControl.State.normal)
+        button.setTitleColor(UIColor.white, for: UIControl.State.normal)
+        button.backgroundColor = UIColor.black
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        addSubview(containerView)
+        
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(priceLabel)
+        containerView.addSubview(topLabel)
+        containerView.addSubview(checkoutButton)
+        
+        containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 12).isActive = true
+        containerView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 12).isActive = true
+        containerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -12).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -12).isActive = true
+        
+        topLabel.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        topLabel.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        topLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        topLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        titleLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8).isActive = true
+        titleLabel.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
+        titleLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        titleLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
+
+        priceLabel.centerYAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8).isActive = true
+        priceLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        priceLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        priceLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        checkoutButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12).isActive = true
+        checkoutButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 12).isActive = true
+        checkoutButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -12).isActive = true
+        checkoutButton.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
 

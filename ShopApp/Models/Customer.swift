@@ -18,10 +18,68 @@ class Customer: NSObject {
     var shoppingBag: [ShoppingItem]
     var wishList: [ShoppingItem]
     
+    enum BagType {
+        case shoppingBag
+        case wishList
+    }
+    
     init(firstName: String, lastName: String) {
         self.firstName = firstName
         self.lastName = lastName
         shoppingBag = [ShoppingItem]()
         wishList = [ShoppingItem]()
+    }
+    
+    
+    func add(to bagType: BagType, withItem newItem: ShoppingItem) {
+        switch bagType {
+        case .shoppingBag:
+            var isAddedItem = false // check item has been in bag or not
+            for item in shoppingBag {
+                if newItem.id == item.id {
+                    if newItem.size == item.size && newItem.color == item.color {
+                        // if id, size, color of new item == item. They are the same
+                        // increase quantity by 1
+                        item.quantity = NSNumber(value: Int(truncating: item.quantity) + 1)
+                        isAddedItem = true
+                        
+                        // finished when the bag is updated
+                        break
+                    }
+                }
+            }
+            if !isAddedItem {
+                shoppingBag.append(newItem)
+            }
+        case .wishList:
+            var isAddedItem = false // check item has been in bag or not
+            for item in wishList {
+                if newItem.id == item.id {
+                    if newItem.size == item.size && newItem.color == item.color {
+                        // if id, size, color of new item == item. They are the same
+                        // increase quantity by 1
+                        item.quantity = NSNumber(value: Int(truncating: item.quantity) + 1)
+                        isAddedItem = true
+                        
+                        // finished when the bag is updated
+                        break
+                    }
+                }
+            }
+            if !isAddedItem {
+                wishList.append(newItem)
+            }
+        }
+    }
+    
+    func getShoppingBagTotalPrice() -> NSNumber {
+        // alway for shoppingBag
+        // not wishlist
+        var result: NSNumber = 0
+        for item in shoppingBag {
+            result = NSNumber(value: Float(truncating: result) + Float(truncating: item.discountPrice))
+        }
+        
+        return result
     }
 }
