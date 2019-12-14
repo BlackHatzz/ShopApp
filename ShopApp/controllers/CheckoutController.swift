@@ -21,26 +21,29 @@ class CheckoutController: UIViewController {
         return collectionView
     }()
     
-    let bottomContainerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.white
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    let verificationView = VerificationView(withTitle: "Purchase Now", style: VerificationView.Style.inactive
+    )
     
-    let purchaseButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Purchase Now", for: UIControl.State.normal)
-        button.setTitleColor(UIColor(white: 0.7, alpha: 1), for: UIControl.State.normal)
-        button.titleLabel?.font = UIFont.helvetica(ofsize: 14)
-        button.backgroundColor = UIColor(white: 0.9, alpha: 1)
-        return button
-    }()
+//    let bottomContainerView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = UIColor.white
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
+    
+//    let purchaseButton: UIButton = {
+//        let button = UIButton()
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        button.setTitle("Purchase Now", for: UIControl.State.normal)
+//        button.setTitleColor(UIColor(white: 0.7, alpha: 1), for: UIControl.State.normal)
+//        button.titleLabel?.font = UIFont.helvetica(ofsize: 14)
+//        button.backgroundColor = UIColor(white: 0.9, alpha: 1)
+//        return button
+//    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(white: 0.9, alpha: 1)
+        view.backgroundColor = UIColor(white: 0.875, alpha: 1)
         setupNavbar()
         setupViews()
         
@@ -60,27 +63,30 @@ class CheckoutController: UIViewController {
     }
     
     func setupViews() {
-        view.addSubview(procedureCollectionView)
-        view.addSubview(bottomContainerView)
+        verificationView.translatesAutoresizingMaskIntoConstraints = false
         
-        bottomContainerView.addSubview(purchaseButton)
+        view.addSubview(procedureCollectionView)
+        view.addSubview(verificationView)
+//        view.addSubview(bottomContainerView)
+        
+//        bottomContainerView.addSubview(purchaseButton)
         
         // set up from bottom to top
-        bottomContainerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        bottomContainerView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        bottomContainerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        bottomContainerView.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        verificationView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        verificationView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        verificationView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        verificationView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
         procedureCollectionView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         procedureCollectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         procedureCollectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        procedureCollectionView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor).isActive = true
+        procedureCollectionView.bottomAnchor.constraint(equalTo: verificationView.topAnchor).isActive = true
         
         // set up view in bottomContainerView
-        purchaseButton.centerXAnchor.constraint(equalTo: bottomContainerView.centerXAnchor).isActive = true
-        purchaseButton.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor).isActive = true
-        purchaseButton.widthAnchor.constraint(equalTo: bottomContainerView.widthAnchor, multiplier: 0.9).isActive = true
-        purchaseButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+//        purchaseButton.centerXAnchor.constraint(equalTo: bottomContainerView.centerXAnchor).isActive = true
+//        purchaseButton.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor).isActive = true
+//        purchaseButton.widthAnchor.constraint(equalTo: bottomContainerView.widthAnchor, multiplier: 0.9).isActive = true
+//        purchaseButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
         
     }
     

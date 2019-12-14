@@ -37,20 +37,17 @@ class NotificationView: UIView {
             }
         }
     }
-    @objc func removeView() {
-        
-    }
     
     enum NotiType {
         case loading
         case checked
-        case none
     }
-    private var notiType: NotiType = NotiType.none
+    private var notiType: NotiType
     
-    convenience init(title: String?, type: NotiType) {
-        self.init(frame: CGRect.zero)
+    init(title: String?, type: NotiType) {
         self.notiType = type
+        super.init(frame: CGRect.zero)
+        
         self.layer.zPosition = 100
         self.backgroundColor = UIColor(white: 0.9, alpha: 1)
         self.layer.cornerRadius = 4
@@ -82,8 +79,6 @@ class NotificationView: UIView {
             checkedImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -10).isActive = true
             checkedImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
             checkedImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        case .none:
-            assertionFailure()
         }
         
         self.addSubview(label)
@@ -93,5 +88,9 @@ class NotificationView: UIView {
         label.heightAnchor.constraint(equalToConstant: 18).isActive = true
         
         
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

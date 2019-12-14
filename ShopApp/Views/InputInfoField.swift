@@ -35,6 +35,15 @@ class InputInfoField: UIView {
         return textField
     }()
     
+    let notificationLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor.clear
+        label.font = UIFont.helvetica(ofsize: 13)
+        label.textColor = UIColor.rgb(255, 110, 120)
+        return label
+    }()
+    
     enum Status {
         case `default`
         case invalid
@@ -52,6 +61,8 @@ class InputInfoField: UIView {
                 caAnimation.repeatCount = 1
                 inputContainerView.layer.add(caAnimation, forKey: "borderColor")
                 inputContainerView.layer.borderColor = UIColor(white: 0.75, alpha: 1).cgColor
+                
+                notificationLabel.text = nil
             case .focus:
                 let caAnimation = CABasicAnimation(keyPath: "borderColor")
                 caAnimation.fromValue = inputContainerView.layer.borderColor
@@ -68,6 +79,8 @@ class InputInfoField: UIView {
                 caAnimation.repeatCount = 1
                 inputContainerView.layer.add(caAnimation, forKey: "borderColor")
                 inputContainerView.layer.borderColor = UIColor.rgb(255, 110, 120).cgColor
+                
+                notificationLabel.text = "The \(titleLabel.text ?? "") field is required"
             }
         }
     }
@@ -80,6 +93,7 @@ class InputInfoField: UIView {
         
         addSubview(titleLabel)
         addSubview(inputContainerView)
+        addSubview(notificationLabel)
         inputContainerView.addSubview(textField)
         
         titleLabel.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
@@ -90,12 +104,19 @@ class InputInfoField: UIView {
         inputContainerView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4).isActive = true
         inputContainerView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         inputContainerView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        inputContainerView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        inputContainerView.bottomAnchor.constraint(equalTo: notificationLabel.topAnchor, constant: -8).isActive = true
+        
         
         textField.topAnchor.constraint(equalTo: inputContainerView.topAnchor).isActive = true
         textField.leftAnchor.constraint(equalTo: inputContainerView.leftAnchor, constant: 12).isActive = true
         textField.rightAnchor.constraint(equalTo: inputContainerView.rightAnchor, constant: -12).isActive = true
         textField.bottomAnchor.constraint(equalTo: inputContainerView.bottomAnchor).isActive = true
+        
+        notificationLabel.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        notificationLabel.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        notificationLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        notificationLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
     }
     
     required init?(coder aDecoder: NSCoder) {

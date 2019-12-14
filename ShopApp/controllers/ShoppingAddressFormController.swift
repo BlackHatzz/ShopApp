@@ -8,18 +8,19 @@
 
 import UIKit
 
-class ShoppingAddressFormController: UIViewController {
+class ShoppingAddressFormController: UIViewController, UIScrollViewDelegate {
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = true
+        scrollView.backgroundColor = UIColor.clear
         return scrollView
     }()
     let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.clear
+        view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -31,6 +32,7 @@ class ShoppingAddressFormController: UIViewController {
     let stateField = InputInfoField(title: "County/State/Province")
     let phoneField = InputInfoField(title: "Mobile Phone Number")
     
+    let purchaseContainer = VerificationView(withTitle: "Continue", style: VerificationView.Style.active)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +47,7 @@ class ShoppingAddressFormController: UIViewController {
         
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+        scrollView.delegate = self
         
         // add event to textfield
         firstNameField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
@@ -64,6 +67,8 @@ class ShoppingAddressFormController: UIViewController {
         
         phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
         phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        purchaseContainer.handlerButton.addTarget(self, action: #selector(handlePurchase), for: UIControl.Event.touchUpInside)
     }
     
     private func setupNavbar() {
@@ -88,14 +93,22 @@ class ShoppingAddressFormController: UIViewController {
         cityField.translatesAutoresizingMaskIntoConstraints = false
         stateField.translatesAutoresizingMaskIntoConstraints = false
         phoneField.translatesAutoresizingMaskIntoConstraints = false
+        purchaseContainer.translatesAutoresizingMaskIntoConstraints = false
         
         // set up scrollView
         view.addSubview(scrollView)
+        view.addSubview(purchaseContainer)
+        
+        // setup from botttom to top
+        purchaseContainer.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        purchaseContainer.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        purchaseContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        purchaseContainer.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
         scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         scrollView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: purchaseContainer.topAnchor).isActive = true
         
         // setup containerView
         scrollView.addSubview(containerView)
@@ -103,7 +116,8 @@ class ShoppingAddressFormController: UIViewController {
         containerView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 12).isActive = true
         containerView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 8).isActive = true
         containerView.widthAnchor.constraint(equalToConstant: view.frame.width - 16).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: view.frame.width - 12).isActive = true
+//        containerView.heightAnchor.constraint(equalToConstant: view.frame.width - 12).isActive = true
+        containerView.heightAnchor.constraint(equalToConstant: 900).isActive = true
         
         // setup views in containerView
         containerView.addSubview(firstNameField)
@@ -116,35 +130,39 @@ class ShoppingAddressFormController: UIViewController {
         firstNameField.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         firstNameField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         firstNameField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        firstNameField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        firstNameField.heightAnchor.constraint(equalToConstant: 90).isActive = true
         
         lastNameField.topAnchor.constraint(equalTo: firstNameField.bottomAnchor, constant: 12).isActive = true
         lastNameField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         lastNameField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        lastNameField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        lastNameField.heightAnchor.constraint(equalToConstant: 90).isActive = true
 
         addressField.topAnchor.constraint(equalTo: lastNameField.bottomAnchor, constant: 12).isActive = true
         addressField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         addressField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        addressField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        addressField.heightAnchor.constraint(equalToConstant: 90).isActive = true
         
         cityField.topAnchor.constraint(equalTo: addressField.bottomAnchor, constant: 12).isActive = true
         cityField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         cityField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        cityField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        cityField.heightAnchor.constraint(equalToConstant: 90).isActive = true
         
         stateField.topAnchor.constraint(equalTo: cityField.bottomAnchor, constant: 12).isActive = true
         stateField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         stateField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        stateField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        stateField.heightAnchor.constraint(equalToConstant: 90).isActive = true
         
         phoneField.topAnchor.constraint(equalTo: stateField.bottomAnchor, constant: 12).isActive = true
         phoneField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         phoneField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        phoneField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        phoneField.heightAnchor.constraint(equalToConstant: 90).isActive = true
     }
     
     @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         view.endEditing(true)
     }
     
@@ -162,6 +180,31 @@ class ShoppingAddressFormController: UIViewController {
         print("begin")
         guard let superView = sender.superview?.superview as? InputInfoField else { return }
         superView.status = .focus
+    }
+    
+    @objc func handlePurchase() {
+        for field in [firstNameField ,lastNameField, addressField, cityField, stateField, phoneField] {
+            guard let text = field.textField.text else { return }
+            if text.isEmpty {
+                print("nope")
+                return
+            }
+
+        }
+        
+        let notificationView = NotificationView(title: "Purchased", type: NotificationView.NotiType.checked)
+        view.addSubview(notificationView)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.scrollView.setNeedsLayout()
+        self.scrollView.layoutIfNeeded()
+        self.containerView.setNeedsLayout()
+        self.containerView.layoutIfNeeded()
+            
+        self.scrollView.contentSize.height = self.containerView.frame.height
     }
     
 }

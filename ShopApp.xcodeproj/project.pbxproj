@@ -41,6 +41,7 @@
 		15F66E5623A38D4300DE465A /* ShoppingAddressFormController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */; };
 		15F66E5823A390CF00DE465A /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5723A390CF00DE465A /* UINavigationController.swift */; };
 		15F66E5A23A3CC2C00DE465A /* InputInfoField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5923A3CC2C00DE465A /* InputInfoField.swift */; };
+		15F66E5C23A49A7C00DE465A /* VerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5B23A49A7C00DE465A /* VerificationView.swift */; };
 		F30D0394920BD12AF7E4CD92 /* Pods_ShopApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBCB4388F74691B3CF035DF6 /* Pods_ShopApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +82,7 @@
 		15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingAddressFormController.swift; sourceTree = "<group>"; };
 		15F66E5723A390CF00DE465A /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		15F66E5923A3CC2C00DE465A /* InputInfoField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputInfoField.swift; sourceTree = "<group>"; };
+		15F66E5B23A49A7C00DE465A /* VerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationView.swift; sourceTree = "<group>"; };
 		4E30289A04C7D0E7D8E7AA0E /* Pods-ShopApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShopApp.release.xcconfig"; path = "Target Support Files/Pods-ShopApp/Pods-ShopApp.release.xcconfig"; sourceTree = "<group>"; };
 		B4C65FE29F913B0DCC75F18C /* Pods-ShopApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ShopApp.debug.xcconfig"; path = "Target Support Files/Pods-ShopApp/Pods-ShopApp.debug.xcconfig"; sourceTree = "<group>"; };
 		EBCB4388F74691B3CF035DF6 /* Pods_ShopApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ShopApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,6 +186,7 @@
 				15F66E5123A358C800DE465A /* TransactionLabel.swift */,
 				15F66E5323A35C0F00DE465A /* TaskLineView.swift */,
 				15F66E5923A3CC2C00DE465A /* InputInfoField.swift */,
+				15F66E5B23A49A7C00DE465A /* VerificationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				15A91FF922DDB6F900C6D86E /* UIFont.swift in Sources */,
 				1522AA54234458D3002400A1 /* SearchController.swift in Sources */,
 				154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */,
+				15F66E5C23A49A7C00DE465A /* VerificationView.swift in Sources */,
 				15F66E5623A38D4300DE465A /* ShoppingAddressFormController.swift in Sources */,
 				15F66E5A23A3CC2C00DE465A /* InputInfoField.swift in Sources */,
 				15E65FF7232A20BD000EA2DA /* ProductCollectionView.swift in Sources */,

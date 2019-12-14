@@ -84,7 +84,8 @@ class BagController: UIViewController {
         
         // when pressed checkout button
         shoppingCollectionView.didTouchUpInSideCheckoutButton = {() -> Void in
-            let viewController = CheckoutController()
+//            let viewController = CheckoutController()
+            let viewController = ShoppingAddressFormController()
             let navController = UINavigationController(rootViewController: viewController)
             self.navigationController?.present(navController, animated: true, completion: nil)
         }
