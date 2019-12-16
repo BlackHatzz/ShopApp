@@ -34,7 +34,11 @@ class TabController: UITabBarController {
         let tempController = TempController()
         let navTemp = UINavigationController(rootViewController: tempController)
         
-        viewControllers = [homeNav, cartNav, navTemp]
+        let userInfoController = UserInfoController()
+        let userInfoNavController = UINavigationController(rootViewController: userInfoController)
+        userInfoNavController.title = "More"
+        
+        viewControllers = [homeNav, cartNav, navTemp, userInfoNavController]
         self.tabBar.isTranslucent = false
         UITabBar.appearance().tintColor = UIColor.black
     }

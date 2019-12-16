@@ -15,7 +15,7 @@
 		154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */; };
 		155EAE0F23708FFB00F92449 /* BagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155EAE0E23708FFB00F92449 /* BagController.swift */; };
 		15A91FDA22DD7F7200C6D86E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A91FD922DD7F7200C6D86E /* AppDelegate.swift */; };
-		15A91FDC22DD7F7200C6D86E /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A91FDB22DD7F7200C6D86E /* HomeViewController.swift */; };
+		15A91FDC22DD7F7200C6D86E /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A91FDB22DD7F7200C6D86E /* HomeController.swift */; };
 		15A91FE122DD7F7300C6D86E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15A91FE022DD7F7300C6D86E /* Assets.xcassets */; };
 		15A91FE422DD7F7300C6D86E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 15A91FE222DD7F7300C6D86E /* LaunchScreen.storyboard */; };
 		15A91FED22DD7FCC00C6D86E /* CartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15A91FEC22DD7FCC00C6D86E /* CartViewController.swift */; };
@@ -38,6 +38,7 @@
 		15E65FF7232A20BD000EA2DA /* ProductCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E65FF6232A20BD000EA2DA /* ProductCollectionView.swift */; };
 		15E7EED223A6056500CC0250 /* Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E7EED123A6056500CC0250 /* Temp.swift */; };
 		15E7EED423A6358A00CC0250 /* HomeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E7EED323A6358A00CC0250 /* HomeContent.swift */; };
+		15EEFCE023A751EA00A665CE /* UserInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EEFCDF23A751EA00A665CE /* UserInfoController.swift */; };
 		15F66E5223A358C800DE465A /* TransactionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5123A358C800DE465A /* TransactionLabel.swift */; };
 		15F66E5423A35C0F00DE465A /* TaskLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5323A35C0F00DE465A /* TaskLineView.swift */; };
 		15F66E5623A38D4300DE465A /* ShoppingAddressFormController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */; };
@@ -57,7 +58,7 @@
 		155EAE0E23708FFB00F92449 /* BagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BagController.swift; sourceTree = "<group>"; };
 		15A91FD622DD7F7200C6D86E /* ShopApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShopApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		15A91FD922DD7F7200C6D86E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		15A91FDB22DD7F7200C6D86E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		15A91FDB22DD7F7200C6D86E /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		15A91FE022DD7F7300C6D86E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		15A91FE322DD7F7300C6D86E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		15A91FE522DD7F7300C6D86E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 		15E65FF6232A20BD000EA2DA /* ProductCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCollectionView.swift; sourceTree = "<group>"; };
 		15E7EED123A6056500CC0250 /* Temp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temp.swift; sourceTree = "<group>"; };
 		15E7EED323A6358A00CC0250 /* HomeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeContent.swift; sourceTree = "<group>"; };
+		15EEFCDF23A751EA00A665CE /* UserInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoController.swift; sourceTree = "<group>"; };
 		15F66E5123A358C800DE465A /* TransactionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLabel.swift; sourceTree = "<group>"; };
 		15F66E5323A35C0F00DE465A /* TaskLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskLineView.swift; sourceTree = "<group>"; };
 		15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingAddressFormController.swift; sourceTree = "<group>"; };
@@ -151,7 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				15A91FEE22DD804000C6D86E /* TabController.swift */,
-				15A91FDB22DD7F7200C6D86E /* HomeViewController.swift */,
+				15A91FDB22DD7F7200C6D86E /* HomeController.swift */,
 				15A91FEC22DD7FCC00C6D86E /* CartViewController.swift */,
 				15C036BC22E0770800AEA788 /* ProductViewController.swift */,
 				15CBA2CF22E14714009E58ED /* ProductDetailController.swift */,
@@ -160,6 +162,7 @@
 				15BDAC6823A29F7400D7FE7E /* CheckoutController.swift */,
 				15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */,
 				15E7EED123A6056500CC0250 /* Temp.swift */,
+				15EEFCDF23A751EA00A665CE /* UserInfoController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -344,7 +347,7 @@
 				15E7EED423A6358A00CC0250 /* HomeContent.swift in Sources */,
 				15CBA2D022E14714009E58ED /* ProductDetailController.swift in Sources */,
 				1509C62422FBDDF1007F74C1 /* DividerLineView.swift in Sources */,
-				15A91FDC22DD7F7200C6D86E /* HomeViewController.swift in Sources */,
+				15A91FDC22DD7F7200C6D86E /* HomeController.swift in Sources */,
 				15BDAC6923A29F7400D7FE7E /* CheckoutController.swift in Sources */,
 				154F6FD8237BDDBC008984F6 /* Customer.swift in Sources */,
 				15D1A39F22E7E83D00F82F52 /* SlideProductCell.swift in Sources */,
@@ -364,6 +367,7 @@
 				15A91FEF22DD804000C6D86E /* TabController.swift in Sources */,
 				15A91FED22DD7FCC00C6D86E /* CartViewController.swift in Sources */,
 				15F66E5823A390CF00DE465A /* UINavigationController.swift in Sources */,
+				15EEFCE023A751EA00A665CE /* UserInfoController.swift in Sources */,
 				15D7C9D4231D51EA002FA0EC /* UIColor.swift in Sources */,
 				15F66E5223A358C800DE465A /* TransactionLabel.swift in Sources */,
 				15CBA2D222E154D5009E58ED /* UIScrollView.swift in Sources */,
