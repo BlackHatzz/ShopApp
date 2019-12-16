@@ -25,14 +25,14 @@ class ShoppingAddressFormController: UIViewController, UIScrollViewDelegate {
         return view
     }()
     
-    let firstNameField = InputInfoField(title: "First Name")
-    let lastNameField = InputInfoField(title: "Last Name")
-    let addressField = InputInfoField(title: "Address")
-    let cityField = InputInfoField(title: "City")
-    let stateField = InputInfoField(title: "County/State/Province")
-    let phoneField = InputInfoField(title: "Mobile Phone Number")
+    let firstNameField = FieldCheckerView(title: "First Name", style: .bottomNotificationLabel)
+    let lastNameField = FieldCheckerView(title: "Last Name", style: .bottomNotificationLabel)
+    let addressField = FieldCheckerView(title: "Address", style: .bottomNotificationLabel)
+    let cityField = FieldCheckerView(title: "City", style: .bottomNotificationLabel)
+    let stateField = FieldCheckerView(title: "County/State/Province", style: .bottomNotificationLabel)
+    let phoneField = FieldCheckerView(title: "Mobile Phone Number", style: .bottomNotificationLabel)
     
-    let purchaseContainer = VerificationView(withTitle: "Continue", style: VerificationView.Style.active)
+    let purchaseContainer = VerificationView(withTitle: "Continue", style: .active)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -168,7 +168,7 @@ class ShoppingAddressFormController: UIViewController, UIScrollViewDelegate {
     
     @objc private func textFieldEditingDidEnd(_ sender: UITextField) {
         print("sender", sender.text as Any)
-        guard let superView = sender.superview?.superview as? InputInfoField else { return }
+        guard let superView = sender.superview?.superview as? FieldCheckerView else { return }
         guard let text = sender.text else { return }
         if text.isEmpty {
             superView.status = .invalid
@@ -178,7 +178,7 @@ class ShoppingAddressFormController: UIViewController, UIScrollViewDelegate {
     }
     @objc private func textFieldEditingDidBegin(_ sender: UITextField) {
         print("begin")
-        guard let superView = sender.superview?.superview as? InputInfoField else { return }
+        guard let superView = sender.superview?.superview as? FieldCheckerView else { return }
         superView.status = .focus
     }
     

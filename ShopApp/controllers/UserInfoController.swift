@@ -74,6 +74,14 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.row == 1 {
+            let viewController = SignInController()
+            let navController = UINavigationController(rootViewController: viewController)
+            self.navigationController?.present(navController, animated: true, completion: nil)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width, height: 80)
     }
@@ -81,6 +89,13 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
 
 class UserInfoCollectionViewCell: UICollectionViewCell {
     static let cellId = "userInfoCollectionViewCellId"
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        iconImageView.image = nil
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+    }
     
     let iconImageView: UIImageView = {
         let imageView = UIImageView()

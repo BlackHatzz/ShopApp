@@ -21,8 +21,7 @@ class CheckoutController: UIViewController {
         return collectionView
     }()
     
-    let verificationView = VerificationView(withTitle: "Purchase Now", style: VerificationView.Style.inactive
-    )
+    let verificationView = VerificationView(withTitle: "Purchase Now", style: .inactive)
     
 //    let bottomContainerView: UIView = {
 //        let view = UIView()
