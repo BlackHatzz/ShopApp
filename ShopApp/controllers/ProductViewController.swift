@@ -82,7 +82,7 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.hidesBarsOnSwipe = true
+        navigationController?.hidesBarsOnSwipe = false
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -95,7 +95,7 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     private func setupNavBar() {
         
         // set back button
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Back", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
         
 //        shoppingBagButton.backgroundColor = UIColor.red
 //        shoppingBagButton.setImage(UIImage(named: "shopping-bag128")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)

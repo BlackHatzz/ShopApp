@@ -1000,6 +1000,8 @@ final class ProductDetailInfo: UIView {
         self.detailTextView.customedText = infoText
         self.detailTextView.isScrollEnabled = false
         detailTextView.backgroundColor = UIColor.clear
+        detailTextView.isEditable = false
+        detailTextView.isScrollEnabled = false
         setupViews()
     }
     
@@ -1047,6 +1049,7 @@ final class ProductSizeAndFitInfo: UIView {
     let infoTextView: ProductSizeAndFitInfoTextView = {
         let textView = ProductSizeAndFitInfoTextView()
         textView.isScrollEnabled = false
+        textView.isEditable = false
         return textView
     }()
     

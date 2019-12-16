@@ -13,7 +13,8 @@ class TabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let homeController = HomeViewController()
+        let homeController = HomeController()
+        
         let homeNav = UINavigationController(rootViewController: homeController)
         homeNav.title = "Home"
         homeNav.tabBarItem.image = UIImage(named: "home-icon")
@@ -30,8 +31,10 @@ class TabController: UITabBarController {
 //        let nav = UINavigationController(rootViewController: vc)
 //        nav.title = "temp"
         
+        let tempController = TempController()
+        let navTemp = UINavigationController(rootViewController: tempController)
         
-        viewControllers = [homeNav, cartNav]
+        viewControllers = [homeNav, cartNav, navTemp]
         self.tabBar.isTranslucent = false
         UITabBar.appearance().tintColor = UIColor.black
     }
