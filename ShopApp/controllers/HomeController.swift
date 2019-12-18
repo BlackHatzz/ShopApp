@@ -158,6 +158,9 @@ class HomeCell: UICollectionViewCell {
         titleLabel.text = nil
         introLabel.text = nil
         subtitleLabel.text = nil
+        if imageStatus == .loading && !activityIndicatorView.isAnimating {
+            activityIndicatorView.startAnimating()
+        }
     }
     
     enum Style {
@@ -195,7 +198,7 @@ class HomeCell: UICollectionViewCell {
         didSet {
             if imageStatus == .loaded {
                 imageView.isHidden = false
-                activityIndicatorView.startAnimating()
+                activityIndicatorView.stopAnimating()
                 activityIndicatorView.removeFromSuperview()
             } else {
                 assertionFailure("from loaded cannot change to loading status")

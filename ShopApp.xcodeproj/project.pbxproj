@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1502204423A8A8E000B485DA /* TopNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1502204323A8A8E000B485DA /* TopNotificationLabel.swift */; };
+		1502204623A8C01200B485DA /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1502204523A8C01200B485DA /* RegisterController.swift */; };
 		1509C62422FBDDF1007F74C1 /* DividerLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62322FBDDF1007F74C1 /* DividerLineView.swift */; };
 		1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62522FBEA36007F74C1 /* ConnectionButton.swift */; };
 		1522AA54234458D3002400A1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1522AA53234458D3002400A1 /* SearchController.swift */; };
@@ -51,6 +53,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1502204323A8A8E000B485DA /* TopNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNotificationLabel.swift; sourceTree = "<group>"; };
+		1502204523A8C01200B485DA /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		1509C62322FBDDF1007F74C1 /* DividerLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerLineView.swift; sourceTree = "<group>"; };
 		1509C62522FBEA36007F74C1 /* ConnectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionButton.swift; sourceTree = "<group>"; };
 		1522AA53234458D3002400A1 /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
@@ -168,6 +172,7 @@
 				15E7EED123A6056500CC0250 /* Temp.swift */,
 				15EEFCDF23A751EA00A665CE /* UserInfoController.swift */,
 				15EEFCE123A7823B00A665CE /* SignInController.swift */,
+				1502204523A8C01200B485DA /* RegisterController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -201,6 +206,7 @@
 				15F66E5323A35C0F00DE465A /* TaskLineView.swift */,
 				15F66E5B23A49A7C00DE465A /* VerificationView.swift */,
 				15EEFCE323A7834F00A665CE /* DarkButton.swift */,
+				1502204323A8A8E000B485DA /* TopNotificationLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -362,7 +368,9 @@
 				15C036B922E06D2800AEA788 /* Product.swift in Sources */,
 				15A91FF622DDA4CC00C6D86E /* HomeCell.swift in Sources */,
 				15F66E5423A35C0F00DE465A /* TaskLineView.swift in Sources */,
+				1502204623A8C01200B485DA /* RegisterController.swift in Sources */,
 				15A91FF922DDB6F900C6D86E /* UIFont.swift in Sources */,
+				1502204423A8A8E000B485DA /* TopNotificationLabel.swift in Sources */,
 				1522AA54234458D3002400A1 /* SearchController.swift in Sources */,
 				154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */,
 				15F66E5C23A49A7C00DE465A /* VerificationView.swift in Sources */,
