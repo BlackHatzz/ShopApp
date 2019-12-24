@@ -330,7 +330,13 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
     @objc private func handlemoveToAnotherListButton(_ sender: UIButton) {
         // move to wishList and delete item in shoppingBag
         DispatchQueue.main.async {
+            if let currentCell = self.cellForItem(at: IndexPath(row: sender.tag, section: 0)) as? ShoppingItemCell {
+                // change right content to productInfoList(product detail) when user want to move another list
+                currentCell.rightViewContentShowing = .productInfoList
+            }
+            
             let movedItem = self.dataList.remove(at: sender.tag)
+            
             if let handler = self.didHandleMoveItem {
                 handler(movedItem, sender.tag)
             }
@@ -396,7 +402,7 @@ class ShoppingItemCell: UICollectionViewCell {
         priceLabel.text = nil
         statusLabel.text = nil
         quantityLabel.text = nil
-        if rightViewContent == RightViewContent.productInfoList {
+        if rightViewContentShowing == .productInfoList {
             productInfoListView.center.x = panGestureXFlag!
             interactionContainerView.center.x = interactionContainerViewXFlag!
         }
@@ -556,11 +562,11 @@ class ShoppingItemCell: UICollectionViewCell {
     private var panGestureXFlag: CGFloat? = nil
     private var endPanGestureCenterXFlag: CGFloat = 0.0
     private var interactionContainerViewXFlag: CGFloat? = nil
-    private enum RightViewContent {
+    enum RightViewContentShowing {
         case productInfoList
         case interactionButton
     }
-    private var rightViewContent = RightViewContent.productInfoList
+    var rightViewContentShowing = RightViewContentShowing.productInfoList
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -624,7 +630,7 @@ class ShoppingItemCell: UICollectionViewCell {
                     self.productInfoListView.center.x = -self.panGestureXFlag!
                 }, completion: nil)
                 // change status when push content
-                self.rightViewContent = RightViewContent.productInfoList
+                self.rightViewContentShowing = .productInfoList
             } else {
                 // push productInfoListView & interactionContainerView to previous position
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: UIView.AnimationOptions.curveLinear, animations: {
@@ -664,7 +670,7 @@ class ShoppingItemCell: UICollectionViewCell {
                     self.productInfoListView.center.x = self.panGestureXFlag!
                 }, completion: nil)
                 // change status when push content
-                self.rightViewContent = RightViewContent.interactionButton
+                self.rightViewContentShowing = .interactionButton
                 print("end", self.interactionContainerView.center.x, self.interactionContainerViewXFlag!)
             } else {
                 // push productInfoListView & interactionContainerView to previous position

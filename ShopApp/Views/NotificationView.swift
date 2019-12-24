@@ -20,13 +20,14 @@ class NotificationView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-//    private var timer: Timer = Timer()
+    
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         self.frame = CGRect(x: 0, y: 0, width: 125, height: 125)
+    
         if let superview = self.superview {
-            self.center = superview.center
-            if notiType == .checked {
+            self.center = CGPoint(x: superview.center.x, y: superview.center.y - 25)
+            if self.notiType == .checked {
                 DispatchQueue.main.async {
                     UIView.animate(withDuration: 1.5, animations: {
                         self.alpha = 0.0
@@ -54,7 +55,11 @@ class NotificationView: UIView {
         
         label.text = title
         
-        switch type {
+        setupViews()
+    }
+    
+    private func setupViews() {
+        switch notiType {
         case .loading:
             activityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.whiteLarge)
             activityIndicatorView.color = UIColor.black
@@ -86,7 +91,6 @@ class NotificationView: UIView {
         label.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         label.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         label.heightAnchor.constraint(equalToConstant: 18).isActive = true
-        
         
     }
     

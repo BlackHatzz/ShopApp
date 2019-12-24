@@ -13,6 +13,7 @@
 		1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62522FBEA36007F74C1 /* ConnectionButton.swift */; };
 		1522AA54234458D3002400A1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1522AA53234458D3002400A1 /* SearchController.swift */; };
 		152D048D239B469D00EA708A /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152D048C239B469C00EA708A /* PanDirectionGestureRecognizer.swift */; };
+		154C778223AD01C200D85C49 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154C778123AD01C200D85C49 /* String.swift */; };
 		154F6FD8237BDDBC008984F6 /* Customer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F6FD7237BDDBC008984F6 /* Customer.swift */; };
 		154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */; };
 		155EAE0F23708FFB00F92449 /* BagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155EAE0E23708FFB00F92449 /* BagController.swift */; };
@@ -59,6 +60,7 @@
 		1509C62522FBEA36007F74C1 /* ConnectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionButton.swift; sourceTree = "<group>"; };
 		1522AA53234458D3002400A1 /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		152D048C239B469C00EA708A /* PanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
+		154C778123AD01C200D85C49 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		154F6FD7237BDDBC008984F6 /* Customer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Customer.swift; sourceTree = "<group>"; };
 		154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingItem.swift; sourceTree = "<group>"; };
 		155EAE0E23708FFB00F92449 /* BagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BagController.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				15D9051B231BE23200BFEF91 /* CGSize.swift */,
 				15D7C9D3231D51EA002FA0EC /* UIColor.swift */,
 				15F66E5723A390CF00DE465A /* UINavigationController.swift */,
+				154C778123AD01C200D85C49 /* String.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				15F66E5C23A49A7C00DE465A /* VerificationView.swift in Sources */,
 				15F66E5623A38D4300DE465A /* ShoppingAddressFormController.swift in Sources */,
 				15F66E5A23A3CC2C00DE465A /* FieldCheckerView.swift in Sources */,
+				154C778223AD01C200D85C49 /* String.swift in Sources */,
 				15E65FF7232A20BD000EA2DA /* ProductCollectionView.swift in Sources */,
 				15C036BD22E0770800AEA788 /* ProductViewController.swift in Sources */,
 				15EEFCE223A7823B00A665CE /* SignInController.swift in Sources */,

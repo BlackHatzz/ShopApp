@@ -475,7 +475,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         } else {
             // show notification label
             self.notificationLabel.isHidden = false
-            notificationLabel.backgroundColor = UIColor.rgb(204, 152, 159)
+            notificationLabel.backgroundColor = UIColor.rgb(249, 214, 214)
             UIView.animate(withDuration: 0.2, animations: {
                 self.notificationLabelHeightConstraint?.constant = 20
                 self.view.layoutIfNeeded()

@@ -57,7 +57,7 @@ class TopNotificationLabel: UILabel {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        translatesAutoresizingMaskIntoConstraints = false
         isUserInteractionEnabled = true
         textAlignment = NSTextAlignment.center
         backgroundColor = UIColor.rgb(249, 214, 214)
@@ -66,7 +66,6 @@ class TopNotificationLabel: UILabel {
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
         tap.cancelsTouchesInView = false
         addGestureRecognizer(tap)
-        
     }
     
     @objc private func handleTapGesture() {

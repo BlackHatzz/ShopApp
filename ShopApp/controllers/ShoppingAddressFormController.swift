@@ -49,26 +49,7 @@ class ShoppingAddressFormController: UIViewController, UIScrollViewDelegate {
         view.addGestureRecognizer(tap)
         scrollView.delegate = self
         
-        // add event to textfield
-        firstNameField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
-        firstNameField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
-        
-        lastNameField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
-        lastNameField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
-        
-        addressField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
-        addressField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
-        
-        cityField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
-        cityField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
-        
-        stateField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
-        stateField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
-        
-        phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
-        phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
-        
-        purchaseContainer.handlerButton.addTarget(self, action: #selector(handlePurchase), for: UIControl.Event.touchUpInside)
+        setupEvents()
     }
     
     private func setupNavbar() {
@@ -156,6 +137,29 @@ class ShoppingAddressFormController: UIViewController, UIScrollViewDelegate {
         phoneField.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
         phoneField.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
         phoneField.heightAnchor.constraint(equalToConstant: 90).isActive = true
+    }
+    
+    private func setupEvents() {
+        // add event to textfield
+        firstNameField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
+        firstNameField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        lastNameField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
+        lastNameField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        addressField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
+        addressField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        cityField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
+        cityField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        stateField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
+        stateField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd(_:)), for: UIControl.Event.editingDidEnd)
+        phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
+        
+        purchaseContainer.handlerButton.addTarget(self, action: #selector(handlePurchase), for: UIControl.Event.touchUpInside)
     }
     
     @objc private func dismissKeyboard() {

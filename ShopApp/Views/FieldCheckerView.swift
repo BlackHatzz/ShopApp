@@ -32,6 +32,7 @@ class FieldCheckerView: UIView {
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.backgroundColor = UIColor.clear
         textField.font = UIFont.helvetica(ofsize: 14)
+        textField.autocapitalizationType = UITextAutocapitalizationType.none
         return textField
     }()
     
