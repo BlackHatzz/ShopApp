@@ -52,6 +52,7 @@ class NotificationView: UIView {
         self.layer.zPosition = 100
         self.backgroundColor = UIColor(white: 0.9, alpha: 1)
         self.layer.cornerRadius = 4
+        self.isUserInteractionEnabled = false
         
         label.text = title
         

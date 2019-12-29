@@ -12,7 +12,7 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
     
     let userInfoContents: [UserInfoContent] = [
         UserInfoContent(image: UIImage(named: "heart"), title: "WISH LIST", subtitle: "2 items in your Wish List"),
-        UserInfoContent(image: UIImage(named: "user"), title: "MY ACCOUNT", subtitle: "Nguyen Duc Huy"),
+        UserInfoContent(image: UIImage(named: "user"), title: "MY ACCOUNT", subtitle: customer.fullname ?? "Sign in or Register"),
         UserInfoContent(image: UIImage(named: "feedback"), title: "FEEDBACK", subtitle: "Tell us what you think"),
         UserInfoContent(image: UIImage(named: "about"), title: "ABOUT US", subtitle: "350+ designers"),
         UserInfoContent(image: UIImage(named: "orders"), title: "ORDERS", subtitle: "Track and view your orders"),
@@ -34,6 +34,7 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "MORE"
         view.backgroundColor = UIColor.white
         
         userInfoCollectionView.register(UserInfoCollectionViewCell.self, forCellWithReuseIdentifier: UserInfoCollectionViewCell.cellId)
@@ -43,6 +44,13 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
         setupViews()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("appear")
+        userInfoContents[1].subtitle = customer.fullname ?? "Sign in or Register"
+        userInfoCollectionView.reloadItems(at: [IndexPath(item: 1, section: 0)])
+    }
+    
     private func setupViews() {
         view.addSubview(userInfoCollectionView)
 
@@ -50,10 +58,6 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
         userInfoCollectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         userInfoCollectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         userInfoCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     

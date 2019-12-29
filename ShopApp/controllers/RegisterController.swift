@@ -30,7 +30,7 @@ class RegisterController: UIViewController {
         return view
     }()
     
-    var loadingView = NotificationView(title: "Loading", type: .loading)
+    var loadingView = NotificationView(title: "REGISTERING", type: .loading)
     
     let firstnameField = FieldCheckerView(title: "Enter first name", style: .default)
     let lastnameField = FieldCheckerView(title: "Enter last name", style: .default)
@@ -49,8 +49,9 @@ class RegisterController: UIViewController {
         passwordField.textField.isSecureTextEntry = true
         confirmPasswordField.textField.isSecureTextEntry = true
         
-        loadingView.isHidden = true
+        
         view.addSubview(loadingView)
+        loadingView.isHidden = true
         // setup
         setupNavbar()
         setupViews()
@@ -90,6 +91,8 @@ class RegisterController: UIViewController {
         passwordField.translatesAutoresizingMaskIntoConstraints = false
         confirmPasswordField.translatesAutoresizingMaskIntoConstraints = false
         registerButton.translatesAutoresizingMaskIntoConstraints = false
+        passwordField.textField.passwordRules = .none
+        confirmPasswordField.textField.passwordRules = .none
         
         view.addSubview(topNotificationLabel)
         view.addSubview(scrollView)
@@ -235,38 +238,72 @@ class RegisterController: UIViewController {
         let userDictionary: [String: Any] = [
             "firstname": firstNameText,
             "lastname": lastnameText,
-            "emailText": emailText.lowercased(),
+            "email": emailText.lowercased(),
             "password": passwordText
         ]
         
         // show loading view
         loadingView.isHidden = false
-        
+        disenableFields()
         
         Auth.auth().createUser(withEmail: emailText, password: passwordText) { (authResult, error) in
             if let error = error {
                 print("Can not create user. The error is", error)
+                
+                if error.localizedDescription.contains("The email address is already in use by another account") {
+                    self.topNotificationLabel.status = .show
+                    self.topNotificationLabel.text = "Email has been used"
+                }
+                
                 self.loadingView.isHidden = true
+                self.enableFields()
                 return
             }
             
             guard let uid = authResult?.user.uid else { return }
             
             let databaseRef = Database.database().reference()
-            let userRef = databaseRef.child("user").child(uid)
+            let userRef = databaseRef.child("customer").child(uid)
             
             userRef.updateChildValues(userDictionary, withCompletionBlock: { (updateError, ref) in
                 if let updateError = updateError {
                     print("Can not update user. The error is", updateError)
                     self.loadingView.isHidden = true
+                    self.enableFields()
                     return
                 }
                 
+                self.loadingView.isHidden = true
                 print("registed")
+                
+                customer = Customer(id: uid, firstname: firstNameText, lastname: lastnameText, email: emailText)
+                self.navigationController?.dismiss(animated: true, completion: {
+                    print("resited Customer:")
+                    dump(customer)
+                })
                 
             })
         }
         
         topNotificationLabel.status = .hide
     }
+    
+    private func disenableFields() {
+        firstnameField.isUserInteractionEnabled = false
+        lastnameField.isUserInteractionEnabled = false
+        emailField.isUserInteractionEnabled = false
+        passwordField.isUserInteractionEnabled = false
+        confirmPasswordField.isUserInteractionEnabled = false
+        registerButton.isUserInteractionEnabled = false
+    }
+    
+    private func enableFields() {
+        firstnameField.isUserInteractionEnabled = true
+        lastnameField.isUserInteractionEnabled = true
+        emailField.isUserInteractionEnabled = true
+        passwordField.isUserInteractionEnabled = true
+        confirmPasswordField.isUserInteractionEnabled = true
+        registerButton.isUserInteractionEnabled = true
+    }
+    
 }

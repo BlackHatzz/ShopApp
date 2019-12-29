@@ -9,7 +9,8 @@
 import UIKit
 import Firebase
 
-var customer = Customer(firstName: "Huy", lastName: "Nguyen")
+//var customer: Customer! = Customer(id: "jkl", firstName: "Huy", lastName: "Nguyen", email: "testmail@mail.com")
+var customer: Customer = Customer(id: nil, firstname: nil, lastname: nil, email: nil)
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class SignInController: UIViewController {
     let topNotificationLabel = TopNotificationLabel()
@@ -18,7 +19,9 @@ class SignInController: UIViewController {
         return view
     }()
     
-    let usernameField = FieldCheckerView(title: "Enter MIKI username/gmail", style: .default)
+    var loadingView = NotificationView(title: "SIGNING IN", type: .loading)
+    
+    let emailField = FieldCheckerView(title: "Enter email", style: .default)
     let passwordField = FieldCheckerView(title: "Enter password", style: .default)
     let signInButton = DarkButton(title: "Sign in", style: .active)
     let registerLabel: UILabel = {
@@ -44,10 +47,12 @@ class SignInController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.875, alpha: 1)
         
+        view.addSubview(loadingView)
+        loadingView.isHidden = true
         
         // add event
-        usernameField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin), for: UIControl.Event.editingDidBegin)
-        usernameField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: UIControl.Event.editingDidEnd)
+        emailField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin), for: UIControl.Event.editingDidBegin)
+        emailField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: UIControl.Event.editingDidEnd)
         
         passwordField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin), for: UIControl.Event.editingDidBegin)
         passwordField.textField.addTarget(self, action: #selector(textFieldEditingDidEnd), for: UIControl.Event.editingDidEnd)
@@ -63,6 +68,28 @@ class SignInController: UIViewController {
         setupViews()
     }
     
+    @objc private func handleKeyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue else { return }
+        guard let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue else { return }
+        
+        self.loadingView.center.y -= keyboardFrame.height/2
+        
+        UIView.animate(withDuration: keyboardDuration) {
+            self.view.layoutIfNeeded()
+        }
+        
+    }
+    
+    @objc private func handleKeyboardWillHide(_ notification: Notification) {
+        guard let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue else { return }
+        
+        loadingView.center.y = view.center.y - 50
+        
+        UIView.animate(withDuration: keyboardDuration) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     @objc private func textFieldEditingDidBegin(_ sender: UITextField) {
         guard let superView = sender.superview?.superview as? FieldCheckerView else { return }
         superView.status = .focus
@@ -72,29 +99,76 @@ class SignInController: UIViewController {
         superView.status = .default
     }
     @objc private func handleSignIn() {
-        guard let usernameText = usernameField.textField.text else { return }
+        guard let emailText = emailField.textField.text else { return }
         guard let passwordText = passwordField.textField.text else { return }
         
-        if usernameText.isEmpty {
+        if emailText.isEmpty {
             if topNotificationLabel.status == .hide {
                 topNotificationLabel.status = .show
             }
             
-            topNotificationLabel.text = "No username/email address entered"
-        } else if passwordText.count < 8 {
+            topNotificationLabel.text = "No email address entered"
+            return
+        } else if passwordText.count < 6 {
             if topNotificationLabel.status == .hide {
                 topNotificationLabel.status = .show
             }
             
-            topNotificationLabel.text = "Your password must be 8 characters long"
-        } else {
-            if topNotificationLabel.status == .hide {
-                topNotificationLabel.status = .show
-            }
-            
-            topNotificationLabel.text = "Incorrect login details entered."
+            topNotificationLabel.text = "Your password must be 6 characters long"
+            return
         }
         
+        loadingView.isHidden = false
+        disenableFields()
+        
+        Auth.auth().signIn(withEmail: emailText, password: passwordText) { (authResult, error) in
+            if let error = error {
+                print("Cannot sign in. Error is", error)
+                
+                if error.localizedDescription.contains("password is invalid") {
+                    if self.topNotificationLabel.status == .hide {
+                        self.topNotificationLabel.status = .show
+                    }
+                    self.topNotificationLabel.text = "Incorrect password"
+                } else if error.localizedDescription.contains("no user record") {
+                    if self.topNotificationLabel.status == .hide {
+                        self.topNotificationLabel.status = .show
+                    }
+                    self.topNotificationLabel.text = "Account hasn't been existed"
+                } else if error.localizedDescription.contains("many unsuccessful login") {
+                    if self.topNotificationLabel.status == .hide {
+                        self.topNotificationLabel.status = .show
+                    }
+                    self.topNotificationLabel.text = "Too many unsuccesful login. Please try again later"
+                }
+                
+                self.loadingView.isHidden = true
+                self.enableFields()
+                return
+            }
+            
+            // get uid from auth firebase
+            if let uid = authResult?.user.uid {
+                let ref = Database.database().reference().child("customer").child(uid)
+                ref.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+                    if let customerInfo = snapshot.value as? [String: Any] {
+                        // get customer info and dismiss current view controller
+                        customer = Customer(id: uid, userInfo: customerInfo)
+                        self.navigationController?.dismiss(animated: true, completion: nil)
+                    }
+                    self.enableFields()
+                    self.loadingView.isHidden = true
+                }, withCancel: { (error) in
+                    print(error.localizedDescription)
+                    self.enableFields()
+                    self.loadingView.isHidden = true
+                })
+                
+            } else {
+                self.enableFields()
+            }
+            
+        }
     }
     
     @objc private func handleTapRegister() {
@@ -115,7 +189,7 @@ class SignInController: UIViewController {
     
     private func setupViews() {
         topNotificationLabel.translatesAutoresizingMaskIntoConstraints = false
-        usernameField.translatesAutoresizingMaskIntoConstraints = false
+        emailField.translatesAutoresizingMaskIntoConstraints = false
         passwordField.translatesAutoresizingMaskIntoConstraints = false
         signInButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -127,17 +201,17 @@ class SignInController: UIViewController {
         containerFormView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         containerFormView.heightAnchor.constraint(equalToConstant: 300).isActive = true
         
-        containerFormView.addSubview(usernameField)
+        containerFormView.addSubview(emailField)
         containerFormView.addSubview(passwordField)
         containerFormView.addSubview(signInButton)
         containerFormView.addSubview(registerLabel)
         
-        usernameField.topAnchor.constraint(equalTo: containerFormView.topAnchor, constant: 24).isActive = true
-        usernameField.leftAnchor.constraint(equalTo: containerFormView.leftAnchor, constant: 12).isActive = true
-        usernameField.rightAnchor.constraint(equalTo: containerFormView.rightAnchor, constant: -12).isActive = true
-        usernameField.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        emailField.topAnchor.constraint(equalTo: containerFormView.topAnchor, constant: 24).isActive = true
+        emailField.leftAnchor.constraint(equalTo: containerFormView.leftAnchor, constant: 12).isActive = true
+        emailField.rightAnchor.constraint(equalTo: containerFormView.rightAnchor, constant: -12).isActive = true
+        emailField.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
-        passwordField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 12).isActive = true
+        passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 12).isActive = true
         passwordField.leftAnchor.constraint(equalTo: containerFormView.leftAnchor, constant: 12).isActive = true
         passwordField.rightAnchor.constraint(equalTo: containerFormView.rightAnchor, constant: -12).isActive = true
         passwordField.heightAnchor.constraint(equalToConstant: 70).isActive = true
@@ -153,5 +227,15 @@ class SignInController: UIViewController {
         registerLabel.widthAnchor.constraint(equalToConstant: 200).isActive = true
         registerLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
+    }
+    
+    private func disenableFields() {
+        emailField.isUserInteractionEnabled = false
+        passwordField.isUserInteractionEnabled = false
+    }
+    
+    private func enableFields() {
+        emailField.isUserInteractionEnabled = true
+        passwordField.isUserInteractionEnabled = true
     }
 }

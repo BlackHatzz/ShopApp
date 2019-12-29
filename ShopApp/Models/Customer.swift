@@ -9,25 +9,46 @@
 import Foundation
 
 class Customer: NSObject {
-    var firstName: String
-    var lastName: String
-    var fullName: String {
-        return firstName + lastName
+    var id: String?
+    var firstname: String?
+    var lastname: String?
+    var fullname: String? {
+        if firstname == nil || lastname == nil {
+            return nil
+        }
+        return firstname! + " " + lastname!
     }
+    var email: String?
     
-    var shoppingBag: [ShoppingItem]
-    var wishList: [ShoppingItem]
+    
+    var shoppingBag = [ShoppingItem]()
+    var wishList = [ShoppingItem]()
     
     enum BagType {
         case shoppingBag
         case wishList
     }
     
-    init(firstName: String, lastName: String) {
-        self.firstName = firstName
-        self.lastName = lastName
-        shoppingBag = [ShoppingItem]()
-        wishList = [ShoppingItem]()
+    init(id: String?, firstname: String?, lastname: String?, email: String?) {
+        self.id = id
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+    }
+    
+    init(id: String, userInfo: [String: Any]) {
+        typealias key = Customer.InfoKey
+        
+        self.id = id
+        self.firstname = userInfo[key.firstname] as? String
+        self.lastname = userInfo[key.lastname] as? String
+        self.email = userInfo[key.email] as? String
+    }
+    
+    struct InfoKey {
+        static let firstname = "firstname"
+        static let lastname = "lastname"
+        static let email = "email"
     }
     
     
