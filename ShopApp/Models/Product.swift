@@ -18,7 +18,7 @@ class Product: NSObject {
         get {
             if price == nil { return nil }
             if discount == nil { return nil }
-            return NSNumber(value: round((price!.floatValue * discount!.floatValue / 100)*100) / 100)
+            return NSNumber(value: round((price!.floatValue * (100 - discount!.floatValue) / 100)*100) / 100)
         }
     }
     var price: NSNumber?
@@ -89,12 +89,19 @@ class Product: NSObject {
         static let black = "#0F0F0F"
         static let ivory = "#E2D9CD"
         static let brown = "#7A5848"
+        static let sand = "#CAA16E"
     }
     struct ColorText {
         static let black = "black"
         static let ivory = "ivory"
         static let brown = "brown"
+        static let sand = "sand"
     }
+    struct Category {
+        static let bag = "bag"
+        static let shoes = "shoes"
+    }
+    
     
     @discardableResult
     func loadFirstImage(completionHandler: (() -> Void)?) -> URLSessionDataTask? {

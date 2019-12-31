@@ -944,7 +944,7 @@ class PriceItemCell: UICollectionViewCell {
 
         priceLabel.centerYAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 8).isActive = true
         priceLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        priceLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        priceLabel.widthAnchor.constraint(equalToConstant: 200).isActive = true
         priceLabel.heightAnchor.constraint(equalToConstant: 18).isActive = true
         
         checkoutButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12).isActive = true

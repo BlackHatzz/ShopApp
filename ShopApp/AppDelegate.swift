@@ -45,46 +45,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 //        gs://shopapp-96ec7.appspot.com/product-image-name/3/3-0.jpg
         
-//        typealias key = Product.InfoKey
-//        let detail = """
-//                Low-top sneakers
-//                Designer logo
-//                Canvas
-//                Jacquard
-//                Leather trims
-//                Silver designer plaque
-//                Lace-up front
-//                Fully lined
-//                Rubber sole
-//                Imported
-//                """
-//        let url = [
-//            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731884cs_13_d.jpg?alt=media&token=57ac62a7-312f-4e48-ad36-3664ee6211b2",
-//            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731884cs_13_e.jpg?alt=media&token=dda9c23a-5620-4d57-995f-4e8ecbaa362d",
-//            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731884cs_13_f.jpg?alt=media&token=040c077d-8383-4f6c-ac8d-ed0a9bc51fe4",
-//            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731884cs_13_r.jpg?alt=media&token=e8b362c6-ae1f-4de5-8f67-052c9eac3d97"
-//        ]
+        typealias key = Product.InfoKey
+        let name = "Leather-trimmed suede ankle boots"
+        let designer = "3.1 PHILLIP LIM"
+        let price: Double = 289
+        let discount: Double = 25
+        
+        let detail = """
+                Ankle boots
+                Suede
+                Lined in shearling
+                Quilted trims
+                Leather trims
+                Lace-up front
+                Rubber sole
+                Round toe
+                Imported
+                """
+//        let sizeAndFit = """
+//        Fits true to size, take your normal size
+//        """
+        let url = [
+            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F7%2F7-0.jpg?alt=media&token=bad72299-e937-4d3d-8bd6-54d1813b4d5a",
+            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F7%2F7-1.jpg?alt=media&token=b3eeadbd-304f-4d4a-abac-9f9aa62b1fec",
+            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F7%2F7-2.jpg?alt=media&token=7113b5c3-fad0-4653-8474-828aa323b7cf",
+            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F7%2F7-3.jpg?alt=media&token=aa8e2923-c550-43a3-adb5-691203d1ce4f"
+        ]
 //        let url2 = [
 //            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731889rt_13_d.jpg?alt=media&token=4cce138c-368a-44f8-8b1c-e9c86a4320c2",
 //            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731889rt_13_e.jpg?alt=media&token=935a3246-8f01-4db1-a51e-4717b0ec6a0d",
 //            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731889rt_13_f.jpg?alt=media&token=ea608c54-b587-4e9e-b2ef-0f3cbefbe83a",
 //            "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F2%2F11731889rt_13_r.jpg?alt=media&token=8a8d0ba7-c3af-45ea-b67c-e8af86e1d18f"
 //        ]
-//
-//        let dictionary: [String: Any] = [
-//            key.name: "Abel woven and textured-leather slip-on sneakers",
-//            key.designer: "DKNY",
+
+        let dictionary: [String: Any] = [
+            key.name: name,
+            "nameSearch": name.lowercased(),
+            key.designer: designer,
+            "designerSearch": designer.lowercased(),
+            key.price: price,
 //            key.discountPrice: 61,
-//            key.discount: 40,
-//            key.status: "low stock",
-//            key.hexColors: [Product.HexColor.black, Product.HexColor.brown],
-//            key.sizes: ["UK 3.5", "UK 4", "UK 4.5", "UK 5", "UK 5.5", "UK 6", "UK 6.5", "UK 7"],
-//            key.detail: detail,
-//            key.composition: ["textile fibers", "leather"],
-//            key.textColors: [Product.TextColor.black, Product.TextColor.brown],
-//            key.imageUrls: url,
+            key.discount: discount,
+            key.status: "just in",
+            key.hexColors: [Product.HexColorText.sand],
+            key.sizes: ["UK 3.5", "UK 4", "UK 4.5", "UK 5", "UK 5.5", "UK 6", "UK 6.5", "UK 7"],
+            key.detail: detail,
+//            key.sizeAndFit: sizeAndFit,
+            key.composition: ["Lambskin", "Leather"],
+            key.textColors: [Product.ColorText.sand],
+            key.quantity: 20,
+            key.category: "shoes",
+            "\(key.imageUrls)0": url,
 //            "\(key.imageUrls)1": url2
-//        ]
+        ]
+        
 //        let databaseRef = Database.database().reference()
 //        databaseRef.child("product").childByAutoId().updateChildValues(dictionary, withCompletionBlock: { (error, ref) in
 //            if let error = error {
@@ -92,9 +106,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            }
 //        })
         
-//        let dictionary: [String: Any] = [
-//            ""
-//        ]
 
         return true
     }

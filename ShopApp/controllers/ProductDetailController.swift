@@ -546,7 +546,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.hidesBarsOnSwipe = true
+        navigationController?.hidesBarsOnSwipe = false
         navigationController?.isNavigationBarHidden = false
     }
     
@@ -603,12 +603,11 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         if let originalPrice = product.price {
             self.olddiscountPriceLabel.text = "Was $\(originalPrice)"
         }
+        if let discountPrice = product.discountPrice {
+            self.discountPriceLabel.text = "$\(discountPrice)"
+        }
         if let discount = product.discount {
             self.discountLabel.text = "\(discount)% off"
-            
-            var discountPrice: Float = product.price!.floatValue * discount.floatValue / 100
-            discountPrice = round(discountPrice*100)/100
-            self.discountPriceLabel.text = "$\(discountPrice)"
         }
         
         if let detail = product.detail {
