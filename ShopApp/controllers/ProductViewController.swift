@@ -16,6 +16,8 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     let databaseRef = Database.database().reference()
     let loadingView = NotificationView(title: "Loading", type: NotificationView.NotiType.loading)
     
+    let shoppingBagButton = ShoppingBagButton()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
@@ -83,6 +85,11 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnSwipe = false
+        if !customer.shoppingBag.isEmpty {
+            shoppingBagButton.quantityLabel.text = "\(customer.shoppingBag.count)"
+        } else {
+            shoppingBagButton.quantityLabel.text = nil
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -100,14 +107,19 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
 //        shoppingBagButton.backgroundColor = UIColor.red
 //        shoppingBagButton.setImage(UIImage(named: "shopping-bag128")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
         
-        let shoppingBagImageView = UIImageView()
-        shoppingBagImageView.image = UIImage(named: "shopping-bag")?.withRenderingMode(.alwaysOriginal)
-        shoppingBagImageView.isUserInteractionEnabled = false
-        shoppingBagButton.addSubview(shoppingBagImageView)
-
-        shoppingBagButton.frame = CGRect(x: 0, y: 0, width: 30, height: 25)
-        shoppingBagImageView.frame = CGRect(x: 0, y: 5, width: 30, height: 25)
+//        let shoppingBagImageView = UIImageView()
+//        shoppingBagImageView.image = UIImage(named: "shopping-bag")?.withRenderingMode(.alwaysOriginal)
+//        shoppingBagImageView.isUserInteractionEnabled = false
+//        shoppingBagButton.addSubview(shoppingBagImageView)
+//
+//        shoppingBagButton.frame = CGRect(x: 0, y: 0, width: 30, height: 25)
+//        shoppingBagImageView.frame = CGRect(x: 0, y: 5, width: 30, height: 25)
+//        
+//        shoppingBagButton.tag = 2
+//        shoppingBagButton.addTarget(self, action: #selector(handleRightNavBarItem(_:)), for: UIControl.Event.touchUpInside)
         
+        
+        shoppingBagButton.frame = CGRect(x: 0, y: 5, width: 30, height: 25)
         shoppingBagButton.tag = 2
         shoppingBagButton.addTarget(self, action: #selector(handleRightNavBarItem(_:)), for: UIControl.Event.touchUpInside)
         
@@ -124,29 +136,12 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         
         searchButton.addTarget(self, action: #selector(handleRightNavBarItem(_:)), for: UIControl.Event.touchUpInside)
         
-//        shoppingBagImageView.centerXAnchor.constraint(equalTo: shoppingBagButton.centerXAnchor).isActive = true
-//        shoppingBagImageView.centerYAnchor.constraint(equalTo: shoppingBagButton.centerYAnchor).isActive = true
-//        shoppingBagImageView.widthAnchor.constraint(equalTo: shoppingBagButton.widthAnchor).isActive = true
-//        shoppingBagImageView.heightAnchor.constraint(equalTo: shoppingBagButton.heightAnchor).isActive = true
-        
-//        shoppingBagButton.setImage(UIImage(named: "shopping-bag")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
-//        shoppingBagButton.imageRect(forContentRect: CGRect(x: 0, y: 0, width: 5, height: 5))
-        
-        
-//        let shoppingBagButton = UIBarButtonItem(image: UIImage(named: "shopping-bag"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleShoppingBagButton))
-        
-//        let searchButton = UIBarButtonItem(image: UIImage(named: "search"), style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleShoppingBagButton))
-        
-//        searchButton.backgroundColor = UIColor.green
-//        searchButton.setImage(UIImage(named: "search")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
-        
-        
         navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: shoppingBagButton), UIBarButtonItem(customView: searchButton)]
         
     }
     
     let searchButton = UIButton()
-    let shoppingBagButton = UIButton()
+//    let shoppingBagButton = UIButton()
     override func viewDidLayoutSubviews() {
         print("search frame", searchButton.frame)
         print("shopping frame", shoppingBagButton.frame)

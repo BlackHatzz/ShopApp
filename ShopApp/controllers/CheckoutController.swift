@@ -50,7 +50,7 @@ class CheckoutController: UIViewController {
             switch indexPath.row {
             case 0:
                 print("select")
-                let viewController = ShoppingAddressFormController()
+                let viewController = ShippingAddressFormController()
                 let navController = UINavigationController(rootViewController: viewController)
                 self.navigationController?.presentPushViewControllerFromRight(navController)
             default:

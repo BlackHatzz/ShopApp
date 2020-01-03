@@ -46,6 +46,7 @@ class SignInController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(white: 0.875, alpha: 1)
+        passwordField.textField.isSecureTextEntry = true
         
         view.addSubview(loadingView)
         loadingView.isHidden = true
@@ -146,7 +147,7 @@ class SignInController: UIViewController {
                 self.enableFields()
                 return
             }
-            
+            weak var pvc = self.presentingViewController
             // get uid from auth firebase
             if let uid = authResult?.user.uid {
                 let ref = Database.database().reference().child("customer").child(uid)
@@ -154,7 +155,17 @@ class SignInController: UIViewController {
                     if let customerInfo = snapshot.value as? [String: Any] {
                         // get customer info and dismiss current view controller
                         customer = Customer(id: uid, userInfo: customerInfo)
-                        self.navigationController?.dismiss(animated: true, completion: nil)
+                        self.view.endEditing(true)
+                        self.navigationController?.dismiss(animated: true, completion: {
+                            if let topController = UIApplication.topViewController() {
+                                if topController is BagController {
+                                    let viewController = ShippingAddressMenuController()
+                                    let navController = UINavigationController(rootViewController: viewController)
+                                    
+                                    pvc?.present(navController, animated: true, completion: nil)
+                                }
+                            }
+                        })
                     }
                     self.enableFields()
                     self.loadingView.isHidden = true
@@ -239,3 +250,4 @@ class SignInController: UIViewController {
         passwordField.isUserInteractionEnabled = true
     }
 }
+

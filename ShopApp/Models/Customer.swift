@@ -23,6 +23,7 @@ class Customer: NSObject {
     
     var shoppingBag = [ShoppingItem]()
     var wishList = [ShoppingItem]()
+//    var shippingAddressList = [ShippingAddress]()
     
     enum BagType {
         case shoppingBag

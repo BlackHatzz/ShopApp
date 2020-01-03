@@ -548,6 +548,7 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnSwipe = false
         navigationController?.isNavigationBarHidden = false
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ShopApp/controllers/BagController.swift"
-            timestampString = "599514253.102298"
+            filePath = "ShopApp/controllers/ShippingAddressFormController.swift"
+            timestampString = "599757702.010447"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "265"
+            endingLineNumber = "265"
+            landmarkName = "handlePurchase()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1501436123BEDF35007EAA9F /* Temp2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1501436023BEDF35007EAA9F /* Temp2.swift */; };
+		1501436323BEEAE2007EAA9F /* ShippingAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1501436223BEEAE2007EAA9F /* ShippingAddress.swift */; };
 		1502204423A8A8E000B485DA /* TopNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1502204323A8A8E000B485DA /* TopNotificationLabel.swift */; };
 		1502204623A8C01200B485DA /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1502204523A8C01200B485DA /* RegisterController.swift */; };
 		1509C62422FBDDF1007F74C1 /* DividerLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62322FBDDF1007F74C1 /* DividerLineView.swift */; };
 		1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62522FBEA36007F74C1 /* ConnectionButton.swift */; };
+		1515684C23BDFAC0006C9756 /* ShippingAddressMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1515684B23BDFAC0006C9756 /* ShippingAddressMenuController.swift */; };
+		1515684E23BE1628006C9756 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1515684D23BE1628006C9756 /* UIApplication.swift */; };
 		1522AA54234458D3002400A1 /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1522AA53234458D3002400A1 /* SearchController.swift */; };
 		152D048D239B469D00EA708A /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152D048C239B469C00EA708A /* PanDirectionGestureRecognizer.swift */; };
 		154C778223AD01C200D85C49 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154C778123AD01C200D85C49 /* String.swift */; };
@@ -34,6 +38,7 @@
 		15C036BD22E0770800AEA788 /* ProductViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C036BC22E0770800AEA788 /* ProductViewController.swift */; };
 		15CBA2D022E14714009E58ED /* ProductDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CBA2CF22E14714009E58ED /* ProductDetailController.swift */; };
 		15CBA2D222E154D5009E58ED /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CBA2D122E154D5009E58ED /* UIScrollView.swift */; };
+		15CC23DB23BF8F0F00662070 /* ShoppingBagButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CC23DA23BF8F0F00662070 /* ShoppingBagButton.swift */; };
 		15CE16322324041C005AE9A1 /* ColorMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CE16312324041C005AE9A1 /* ColorMenu.swift */; };
 		15D1A39F22E7E83D00F82F52 /* SlideProductCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D1A39E22E7E83D00F82F52 /* SlideProductCell.swift */; };
 		15D7C9D4231D51EA002FA0EC /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D7C9D3231D51EA002FA0EC /* UIColor.swift */; };
@@ -46,7 +51,7 @@
 		15EEFCE423A7834F00A665CE /* DarkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EEFCE323A7834F00A665CE /* DarkButton.swift */; };
 		15F66E5223A358C800DE465A /* TransactionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5123A358C800DE465A /* TransactionLabel.swift */; };
 		15F66E5423A35C0F00DE465A /* TaskLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5323A35C0F00DE465A /* TaskLineView.swift */; };
-		15F66E5623A38D4300DE465A /* ShoppingAddressFormController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */; };
+		15F66E5623A38D4300DE465A /* ShippingAddressFormController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5523A38D4300DE465A /* ShippingAddressFormController.swift */; };
 		15F66E5823A390CF00DE465A /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5723A390CF00DE465A /* UINavigationController.swift */; };
 		15F66E5A23A3CC2C00DE465A /* FieldCheckerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5923A3CC2C00DE465A /* FieldCheckerView.swift */; };
 		15F66E5C23A49A7C00DE465A /* VerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F66E5B23A49A7C00DE465A /* VerificationView.swift */; };
@@ -54,10 +59,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1501436023BEDF35007EAA9F /* Temp2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temp2.swift; sourceTree = "<group>"; };
+		1501436223BEEAE2007EAA9F /* ShippingAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingAddress.swift; sourceTree = "<group>"; };
 		1502204323A8A8E000B485DA /* TopNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNotificationLabel.swift; sourceTree = "<group>"; };
 		1502204523A8C01200B485DA /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		1509C62322FBDDF1007F74C1 /* DividerLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerLineView.swift; sourceTree = "<group>"; };
 		1509C62522FBEA36007F74C1 /* ConnectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionButton.swift; sourceTree = "<group>"; };
+		1515684B23BDFAC0006C9756 /* ShippingAddressMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingAddressMenuController.swift; sourceTree = "<group>"; };
+		1515684D23BE1628006C9756 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		1522AA53234458D3002400A1 /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		152D048C239B469C00EA708A /* PanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
 		154C778123AD01C200D85C49 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -83,6 +92,7 @@
 		15C036BC22E0770800AEA788 /* ProductViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductViewController.swift; sourceTree = "<group>"; };
 		15CBA2CF22E14714009E58ED /* ProductDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailController.swift; sourceTree = "<group>"; };
 		15CBA2D122E154D5009E58ED /* UIScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
+		15CC23DA23BF8F0F00662070 /* ShoppingBagButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingBagButton.swift; sourceTree = "<group>"; };
 		15CE16312324041C005AE9A1 /* ColorMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMenu.swift; sourceTree = "<group>"; };
 		15D1A39E22E7E83D00F82F52 /* SlideProductCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideProductCell.swift; sourceTree = "<group>"; };
 		15D7C9D3231D51EA002FA0EC /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -95,7 +105,7 @@
 		15EEFCE323A7834F00A665CE /* DarkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkButton.swift; sourceTree = "<group>"; };
 		15F66E5123A358C800DE465A /* TransactionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLabel.swift; sourceTree = "<group>"; };
 		15F66E5323A35C0F00DE465A /* TaskLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskLineView.swift; sourceTree = "<group>"; };
-		15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingAddressFormController.swift; sourceTree = "<group>"; };
+		15F66E5523A38D4300DE465A /* ShippingAddressFormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingAddressFormController.swift; sourceTree = "<group>"; };
 		15F66E5723A390CF00DE465A /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		15F66E5923A3CC2C00DE465A /* FieldCheckerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCheckerView.swift; sourceTree = "<group>"; };
 		15F66E5B23A49A7C00DE465A /* VerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationView.swift; sourceTree = "<group>"; };
@@ -170,11 +180,13 @@
 				1522AA53234458D3002400A1 /* SearchController.swift */,
 				155EAE0E23708FFB00F92449 /* BagController.swift */,
 				15BDAC6823A29F7400D7FE7E /* CheckoutController.swift */,
-				15F66E5523A38D4300DE465A /* ShoppingAddressFormController.swift */,
+				15F66E5523A38D4300DE465A /* ShippingAddressFormController.swift */,
 				15E7EED123A6056500CC0250 /* Temp.swift */,
 				15EEFCDF23A751EA00A665CE /* UserInfoController.swift */,
 				15EEFCE123A7823B00A665CE /* SignInController.swift */,
 				1502204523A8C01200B485DA /* RegisterController.swift */,
+				1515684B23BDFAC0006C9756 /* ShippingAddressMenuController.swift */,
+				1501436023BEDF35007EAA9F /* Temp2.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -189,6 +201,7 @@
 				15D7C9D3231D51EA002FA0EC /* UIColor.swift */,
 				15F66E5723A390CF00DE465A /* UINavigationController.swift */,
 				154C778123AD01C200D85C49 /* String.swift */,
+				1515684D23BE1628006C9756 /* UIApplication.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -210,6 +223,7 @@
 				15F66E5B23A49A7C00DE465A /* VerificationView.swift */,
 				15EEFCE323A7834F00A665CE /* DarkButton.swift */,
 				1502204323A8A8E000B485DA /* TopNotificationLabel.swift */,
+				15CC23DA23BF8F0F00662070 /* ShoppingBagButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -221,6 +235,7 @@
 				154F6FD7237BDDBC008984F6 /* Customer.swift */,
 				154F6FD9237BEBB8008984F6 /* ShoppingItem.swift */,
 				15E7EED323A6358A00CC0250 /* HomeContent.swift */,
+				1501436223BEEAE2007EAA9F /* ShippingAddress.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -369,6 +384,7 @@
 				15AF16222312C30400CF3101 /* NotificationView.swift in Sources */,
 				15EEFCE423A7834F00A665CE /* DarkButton.swift in Sources */,
 				15C036B922E06D2800AEA788 /* Product.swift in Sources */,
+				1501436323BEEAE2007EAA9F /* ShippingAddress.swift in Sources */,
 				15A91FF622DDA4CC00C6D86E /* HomeCell.swift in Sources */,
 				15F66E5423A35C0F00DE465A /* TaskLineView.swift in Sources */,
 				1502204623A8C01200B485DA /* RegisterController.swift in Sources */,
@@ -377,13 +393,15 @@
 				1522AA54234458D3002400A1 /* SearchController.swift in Sources */,
 				154F6FDA237BEBB8008984F6 /* ShoppingItem.swift in Sources */,
 				15F66E5C23A49A7C00DE465A /* VerificationView.swift in Sources */,
-				15F66E5623A38D4300DE465A /* ShoppingAddressFormController.swift in Sources */,
+				1501436123BEDF35007EAA9F /* Temp2.swift in Sources */,
+				15F66E5623A38D4300DE465A /* ShippingAddressFormController.swift in Sources */,
 				15F66E5A23A3CC2C00DE465A /* FieldCheckerView.swift in Sources */,
 				154C778223AD01C200D85C49 /* String.swift in Sources */,
 				15E65FF7232A20BD000EA2DA /* ProductCollectionView.swift in Sources */,
 				15C036BD22E0770800AEA788 /* ProductViewController.swift in Sources */,
 				15EEFCE223A7823B00A665CE /* SignInController.swift in Sources */,
 				152D048D239B469D00EA708A /* PanDirectionGestureRecognizer.swift in Sources */,
+				1515684C23BDFAC0006C9756 /* ShippingAddressMenuController.swift in Sources */,
 				15A91FEF22DD804000C6D86E /* TabController.swift in Sources */,
 				15A91FED22DD7FCC00C6D86E /* CartViewController.swift in Sources */,
 				15F66E5823A390CF00DE465A /* UINavigationController.swift in Sources */,
@@ -392,7 +410,9 @@
 				15F66E5223A358C800DE465A /* TransactionLabel.swift in Sources */,
 				15CBA2D222E154D5009E58ED /* UIScrollView.swift in Sources */,
 				1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */,
+				1515684E23BE1628006C9756 /* UIApplication.swift in Sources */,
 				155EAE0F23708FFB00F92449 /* BagController.swift in Sources */,
+				15CC23DB23BF8F0F00662070 /* ShoppingBagButton.swift in Sources */,
 				15CE16322324041C005AE9A1 /* ColorMenu.swift in Sources */,
 				15C036BB22E070E600AEA788 /* ProductCell.swift in Sources */,
 				15A91FDA22DD7F7200C6D86E /* AppDelegate.swift in Sources */,

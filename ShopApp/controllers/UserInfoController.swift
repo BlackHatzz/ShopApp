@@ -7,15 +7,16 @@
 //
 
 import UIKit
+import Firebase
 
 class UserInfoController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     let userInfoContents: [UserInfoContent] = [
-        UserInfoContent(image: UIImage(named: "heart"), title: "WISH LIST", subtitle: "2 items in your Wish List"),
-        UserInfoContent(image: UIImage(named: "user"), title: "MY ACCOUNT", subtitle: customer.fullname ?? "Sign in or Register"),
+//        UserInfoContent(image: UIImage(named: "heart"), title: "WISH LIST", subtitle: "2 items in your Wish List"),
+//        UserInfoContent(image: UIImage(named: "user"), title: "MY ACCOUNT", subtitle: customer.fullname ?? "Sign in or Register"),
         UserInfoContent(image: UIImage(named: "feedback"), title: "FEEDBACK", subtitle: "Tell us what you think"),
         UserInfoContent(image: UIImage(named: "about"), title: "ABOUT US", subtitle: "350+ designers"),
-        UserInfoContent(image: UIImage(named: "orders"), title: "ORDERS", subtitle: "Track and view your orders"),
+//        UserInfoContent(image: UIImage(named: "orders"), title: "ORDERS", subtitle: "Track and view your orders"),
     ]
     
     let userInfoCollectionView: UICollectionView = {
@@ -48,7 +49,23 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
         super.viewWillAppear(animated)
         print("appear")
         userInfoContents[1].subtitle = customer.fullname ?? "Sign in or Register"
-        userInfoCollectionView.reloadItems(at: [IndexPath(item: 1, section: 0)])
+        
+//        let ref = Database.database().reference().child("order")
+//        if let id = customer.id {
+//            ref.queryOrdered(byChild: "customerId").queryEqual(toValue: id).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+//                print("history", snapshot.key)
+//                print(snapshot.value)
+//                print("--")
+//                dump(snapshot.value)
+//            }) { (error) in
+//                print(error.localizedDescription)
+//            }
+//        }
+        
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        userInfoCollectionView.reloadItems(at: [IndexPath(item: 1, section: 0)])
     }
     
     private func setupViews() {
@@ -79,11 +96,11 @@ class UserInfoController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.row == 1 {
-            let viewController = SignInController()
-            let navController = UINavigationController(rootViewController: viewController)
-            self.navigationController?.present(navController, animated: true, completion: nil)
-        }
+//        if indexPath.row == 1 {
+//            let viewController = SignInController()
+//            let navController = UINavigationController(rootViewController: viewController)
+//            self.navigationController?.present(navController, animated: true, completion: nil)
+//        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

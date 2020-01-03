@@ -90,12 +90,14 @@ class Product: NSObject {
         static let ivory = "#E2D9CD"
         static let brown = "#7A5848"
         static let sand = "#CAA16E"
+        static let pink = "#E8D5D7"
     }
     struct ColorText {
         static let black = "black"
         static let ivory = "ivory"
         static let brown = "brown"
         static let sand = "sand"
+        static let pink = "pink"
     }
     struct Category {
         static let bag = "bag"

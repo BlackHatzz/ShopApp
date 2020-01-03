@@ -206,6 +206,8 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done, target: self, action: #selector(handleDoneButton))
         
         self.navigationItem.rightBarButtonItem = doneButton
+        
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
     }
     
     private func setupView() {
@@ -301,6 +303,14 @@ class SearchingController: UIViewController, UICollectionViewDelegate, UICollect
         
         return cell
     }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.section == 0 { return }
+        let viewController = ProductDetailController(ofProduct: productSearchResult[indexPath.row])
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     
 // ---------------------------------------------------------------------------
     
