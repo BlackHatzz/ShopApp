@@ -17,7 +17,7 @@ let samuelQuotes = [
     "And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee."
 ]
 
-class TempController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class DynamicCollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private(set) var collectionView: UICollectionView
     
     // Initializers

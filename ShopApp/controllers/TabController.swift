@@ -22,26 +22,31 @@ class TabController: UITabBarController {
         homeNav.navigationBar.isTranslucent = false
 //        homeNav.isNavigationBarHidden = true
         
-        let cartController = CartViewController()
-        let cartNav = UINavigationController(rootViewController: cartController)
-        cartNav.title = "Cart"
-        cartNav.tabBarItem.image = UIImage(named: "cart-icon")
+//        let cartController = CartViewController()
+//        let cartNav = UINavigationController(rootViewController: cartController)
+//        cartNav.title = "Cart"
+//        cartNav.tabBarItem.image = UIImage(named: "cart-icon")
         
 //        let vc = FriendRequestsController()
 //        let nav = UINavigationController(rootViewController: vc)
 //        nav.title = "temp"
         
-        let tempController = TempController()
-        let navTemp = UINavigationController(rootViewController: tempController)
+        let designerController = DesignersController()
+        let navDesignerController = UINavigationController(rootViewController: designerController)
+        navDesignerController.title = "Designers"
+        navDesignerController.tabBarItem.image = UIImage(named: "people")
         
-        let tempController2 = Temp2()
-        let navTemp2 = UINavigationController(rootViewController: tempController2)
+        let categoriesController = CategoriesController()
+        let navCategoriesController = UINavigationController(rootViewController: categoriesController)
+        navCategoriesController.title = "Categories"
+        navCategoriesController.tabBarItem.image = UIImage(named: "hanger")
         
         let userInfoController = UserInfoController()
         let userInfoNavController = UINavigationController(rootViewController: userInfoController)
         userInfoNavController.title = "More"
+        userInfoNavController.tabBarItem.image = UIImage(named: "more")
         
-        viewControllers = [homeNav, cartNav, navTemp, navTemp2, userInfoNavController]
+        viewControllers = [homeNav, navDesignerController, navCategoriesController, userInfoNavController]
         self.tabBar.isTranslucent = false
         UITabBar.appearance().tintColor = UIColor.black
     }

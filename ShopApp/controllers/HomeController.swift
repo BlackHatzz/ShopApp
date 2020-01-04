@@ -24,6 +24,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.title = "MIKI SHOP"
         // show loading view when no data
         view.addSubview(loadingView)
         
