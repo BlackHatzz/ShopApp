@@ -30,7 +30,7 @@ class RegisterController: UIViewController {
         return view
     }()
     
-    var loadingView = NotificationView(title: "REGISTERING", type: .loading)
+    var loadingView = ProcessView(title: "REGISTERING", type: .loading)
     
     let firstnameField = FieldCheckerView(title: "Enter first name", style: .default)
     let lastnameField = FieldCheckerView(title: "Enter last name", style: .default)

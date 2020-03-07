@@ -25,23 +25,6 @@ class SlideProductCell: UICollectionViewCell {
     
     
     final class ProductActivityIndicatorView: UIActivityIndicatorView {
-//        var status = SlideProductCell.ProductActivityIndicatorView.StatusKey.initialization
-//        struct StatusKey {
-//            static let initialization = "initialization"
-//            static let loading = "loading"
-//            static let loaded = "loaded"
-//        }
-        
-        override func startAnimating() {
-            super.startAnimating()
-//            status = SlideProductCell.ProductActivityIndicatorView.StatusKey.loading
-        }
-        
-        override func stopAnimating() {
-            super.stopAnimating()
-//            status = SlideProductCell.ProductActivityIndicatorView.StatusKey.loading
-        }
-        
         override init(frame: CGRect) {
             super.init(frame: frame)
             self.setNeededProperties()

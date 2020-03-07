@@ -15,7 +15,7 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     private static let cellId = "cellId"
     
     var homeContents = [HomeContent]()
-    let loadingView = NotificationView(title: "Loading", type: NotificationView.NotiType.loading)
+    let loadingView = ProcessView(title: "Loading", type: ProcessView.NotiType.loading)
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -92,7 +92,8 @@ class HomeController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let viewController = ProductViewController(collectionViewLayout: UICollectionViewFlowLayout())
+//        let viewController = ProductViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        let viewController = ProductViewController(category: nil)
 //        let navController = UINavigationController(rootViewController: viewController)
         self.navigationController?.pushViewController(viewController, animated: true)
     }

@@ -340,112 +340,12 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
                         self.productCollectionView.reloadData()
 
                     }, completionHandler: nil)
-//                    var temp = [Int: UIImage]()
-//                    for (index, imageUrl) in product!.imageUrls[currentIndexProductImages]!.enumerated() {
-//                        Product.loadImageFromStorage(fromURLString: imageUrl, completion: { (result: UIImage?) in
-//                            temp[index] = result
-//                            product!.images[currentIndexProductImages] = temp
-//
-//                            self.productCollectionView.statusCell[index] = ProductCollectionView.StatusCellKey.loaded
-//                            self.productCollectionView.reloadData()
-//                        })
-//                    }
                 })
-                
-                
-                
-                
-//                Product.loadImageFromStorage(fromURLStrings: product!.imageUrls![currentIndexProductImages]!, handleEachResult: { (index, result) in
-//                    print("each result:", index, result)
-//                    temp[0] = [index: result]
-//                    print("each2", temp)
-//                }, completion: { (finalResult: [Int : UIImage]) in
-//                    print("final result", finalResult)
-//                    print("each2", temp)
-//                })
-                
-                
-                // hide all image
-//                self.productCollectionView.visibleCells.forEach({ (cell) in
-//                    let productCell = cell as! SlideProductCell
-//                    productCell.productImageView.isHidden = true
-//                    productCell.activityIndicatorView.startAnimating()
-//                })
-                
-                // indicator in productView start when chose another option not in memory
-                
-//                self.productCollectionView.activityIndicatorView.startAnimating()
-//                Product.loadImageFromStorage(fromURLStrings: product!.imageUrls![currentIndexProductImages]!) { (result: [Int : UIImage]) in
-//                    product?.images[currentIndexProductImages] = result // set new current index = new result(images from database)
-//                    self.productCollectionView.reloadData() // reload when download images from database are all done
-//
-//                    // when collectionView is completed reload data
-//                    self.productCollectionView.performBatchUpdates(nil, completion: { (_) in
-//                        self.productCollectionView.activityIndicatorView.stopAnimating()
-//                        self.productCollectionView.visibleCells.forEach({ (cell) in
-//                            let productCell = cell as! SlideProductCell
-//                            productCell.productImageView.isHidden = false
-//                        })
-//                    })
-//                }
             } else {
                 self.productCollectionView.reloadData()
             }
             
         }
-        
-        //        self.navigationItem.title = "ADIDAS"
-        //        let detail = """
-        //        ow-top sneakers
-        //        Knitted
-        //        Laminated effect
-        //        Designer stamp
-        //        Lace-up front
-        //        Lined in fabric
-        //        Rubber sole
-        //        Pull tabs
-        //        Imported
-        //        """
-        //        let url = [
-        //        "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F0%2F0-0.jpg?alt=media&token=ffb1613e-11df-4261-968c-00bca537f962",
-        //        "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F0%2F0-1.jpg?alt=media&token=edb77e7c-fe66-4c1b-9155-393b83224b34",
-        //        "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F0%2F0-2.jpg?alt=media&token=59536481-f5f2-48e8-878b-9423ea3bbbae",
-        //        "https://firebasestorage.googleapis.com/v0/b/shopapp-96ec7.appspot.com/o/product-image-name%2F0%2F0-3.jpg?alt=media&token=7fa02635-83f0-47f7-bd10-a61dd2f879c6"
-        //        ]
-        
-        //        let dictionary: [String: Any] = [
-        //            key.name: "adidas original",
-        //            key.designer: "Arkyn stretch-knit sneakers",
-        //            key.discountPrice: 84,
-        //            key.price: 130,
-        //            key.status: "just in",
-        //            key.hexColors: [Product.HexColor.black],
-        //            key.sizes: ["UK 3.5", "UK 4", "UK 4.5", "UK 5", "UK 5.5", "UK 6", "UK 6.5", "UK 7"],
-        //            key.detail: detail,
-        //            key.composition: ["textile fibers", "rubber"],
-        //            key.textColor: "black",
-        //            key.imageUrls: url
-        //            ]
-        //        static let name = "name"
-        //        static let imageUrls = "imageUrls"
-        //        static let sizes = "sizes"
-        //        static let discountPrice = "discountPrice"
-        //        static let price = "price"
-        //        static let quantity = "quantity"
-        //        static let discount = "discount"
-        //        static let description = "description"
-        //        static let category = "category"
-        //        static let designer = "designer"
-        //        static let status = "status"
-        //        static let composition = "composition"
-        //        static let hexColors = "hexColors"
-        
-        //        databaseRef?.child("product").childByAutoId().updateChildValues(dictionary, withCompletionBlock: { (error, ref) in
-        //            if let error = error {
-        //                print(error)
-        //            }
-        //        })
-        
         
         self.view.backgroundColor = UIColor.white
         productCollectionView.delegate = self
@@ -456,8 +356,6 @@ class ProductDetailController: UIViewController, UIScrollViewDelegate, UICollect
         setupViews()
         self.addToBagButton.addTarget(self, action: #selector(handleAddToBag), for: UIControl.Event.touchUpInside)
         self.addToWishListButton.addTarget(self, action: #selector(handleAddToBag(_:)), for: UIControl.Event.touchUpInside)
-        
-//        sizeCollectionView.productSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11", "UK 12", "UK 13"]
     }
     
     func changeNotificationLabelStatus(withContent content: String, isHidden: Bool) {

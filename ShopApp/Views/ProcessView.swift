@@ -9,7 +9,7 @@
 import UIKit
 import Foundation.NSTimer
 
-class NotificationView: UIView {
+class ProcessView: UIView {
     var activityIndicatorView: UIActivityIndicatorView! = nil
     var checkedImageView: UIImageView! = nil
     

@@ -298,9 +298,9 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
                 }
                 orderRef.removeAllObservers()
                 
-                let notificationView = NotificationView(title: "Successed", type: NotificationView.NotiType.checked)
+                let processView = ProcessView(title: "Successed", type: ProcessView.NotiType.checked)
                 if let windowView = UIApplication.shared.keyWindow {
-                    windowView.addSubview(notificationView)
+                    windowView.addSubview(processView)
                 }
                 
                 self.navigationController?.dismiss(animated: true, completion: nil)

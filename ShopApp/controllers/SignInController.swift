@@ -19,7 +19,7 @@ class SignInController: UIViewController {
         return view
     }()
     
-    var loadingView = NotificationView(title: "SIGNING IN", type: .loading)
+    var loadingView = ProcessView(title: "SIGNING IN", type: .loading)
     
     let emailField = FieldCheckerView(title: "Enter email", style: .default)
     let passwordField = FieldCheckerView(title: "Enter password", style: .default)

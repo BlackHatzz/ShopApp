@@ -355,7 +355,7 @@ class ShoppingCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
             self.performBatchUpdates({
                 self.deleteItems(at: [IndexPath(item: sender.tag, section: 0)])
             }, completion: { (finished) in
-                let checkedView = NotificationView(title: "Updated", type: NotificationView.NotiType.checked)
+                let checkedView = ProcessView(title: "Updated", type: ProcessView.NotiType.checked)
                 self.superview?.addSubview(checkedView) // auto delete checkedView from superview after a while
                 self.reloadItems(at: self.indexPathsForVisibleItems)
             })

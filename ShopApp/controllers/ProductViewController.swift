@@ -14,15 +14,94 @@ private var products = [Product]()
 
 class ProductViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     let databaseRef = Database.database().reference()
-    let loadingView = NotificationView(title: "Loading", type: NotificationView.NotiType.loading)
+    let loadingView = ProcessView(title: "Loading", type: ProcessView.NotiType.loading)
     
     let shoppingBagButton = ShoppingBagButton()
     
+    init(category: String?) {
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        
+        
+        if category == nil {
+            // get data from database
+            let productRef = databaseRef.child("product")
+            let productQuery = productRef.queryOrderedByKey().queryLimited(toFirst: 1000)
+            
+            productQuery.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String: Any] {
+                    for (productId, productDictionary) in dictionary {
+                        products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
+                    }
+                    dump(products)
+                    self.collectionView.reloadData()
+                    
+                    self.collectionView.performBatchUpdates({
+                        products.sort(by: { (product1, product2) -> Bool in
+                            return product1.id > product2.id
+                        })
+                    }, completion: { (_) in
+                        self.loadingView.activityIndicatorView.stopAnimating()
+                        self.loadingView.removeFromSuperview()
+                        
+                        for product in products {
+                            product.loadFirstImage(completionHandler: {
+                                // reload data of collection view when load one image
+                                DispatchQueue.main.async {
+                                    self.collectionView.reloadData()
+                                }
+                            })
+                        }
+                    })
+                }
+            }) { (error) in
+                print(error.localizedDescription)
+            }
+        } else {
+            let productRef = Database.database().reference().child("product")
+            let productQuery = productRef.queryOrdered(byChild: "category").queryEqual(toValue: category!).queryLimited(toFirst: 1000)
+            
+            productQuery.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String: Any] {
+                    for (productId, productDictionary) in dictionary {
+                        products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
+                    }
+                    dump(products)
+                    self.collectionView.reloadData()
+                    
+                    self.collectionView.performBatchUpdates({
+                        products.sort(by: { (product1, product2) -> Bool in
+                            return product1.id > product2.id
+                        })
+                    }, completion: { (_) in
+                        self.loadingView.activityIndicatorView.stopAnimating()
+                        self.loadingView.removeFromSuperview()
+                        
+                        for product in products {
+                            product.loadFirstImage(completionHandler: {
+                                // reload data of collection view when load one image
+                                DispatchQueue.main.async {
+                                    self.collectionView.reloadData()
+                                }
+                            })
+                        }
+                    })
+                }
+            }) { (error) in
+                print(error.localizedDescription)
+            }
+        }
+        
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "MIKI SHOP"
         setupNavBar()
-//        self.collectionView.delegate = self
-//        self.collectionView.dataSource = self
         
         view.addSubview(loadingView)
         
@@ -30,61 +109,17 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         
         collectionView!.backgroundColor = UIColor.white
         
-        // get data from database
-        let flag = Date().timeIntervalSince1970
-        print("time flag", flag)
-        let productRef = databaseRef.child("product")
-        let productQuery = productRef.queryOrderedByKey().queryLimited(toFirst: 1000)
-        
-        productQuery.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
-            if let dictionary = snapshot.value as? [String: Any] {
-                for (productId, productDictionary) in dictionary {
-                    products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
-                }
-                dump(products)
-                self.collectionView.reloadData()
-                
-                self.collectionView.performBatchUpdates(nil) { (_) in
-                    self.loadingView.activityIndicatorView.stopAnimating()
-                    self.loadingView.removeFromSuperview()
-                    
-                    for product in products {
-                        product.loadFirstImage(completionHandler: {
-                            // reload data of collection view when load one image
-                            DispatchQueue.main.async {
-                                self.collectionView.reloadData()
-                            }
-                        })
-                    }
-                    
-//                    for (index, product) in products.enumerated() {
-////                        if let imageUrls = product.imageUrls {
-//                            if !product.imageUrls.isEmpty {
-//                                let imageUrlsList = product.imageUrls[0]
-//                                let firstUrlImage = imageUrlsList![0]
-//
-//                                Product.loadImageFromStorage(fromURLString: firstUrlImage, completion: { (result: UIImage?) in
-////                                    product.images[index] = [0: result!]
-//                                    products[index].images[0] = [0: result!]
-//                                    self.collectionView.reloadData()
-//                                })
-//                            }
-//
-////                        }
-//
-//                    }
-                    
-                }
-            }
-        }) { (error) in
-            print(error.localizedDescription)
-        }
         
     } // viewDidLoad
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnSwipe = false
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         if !customer.shoppingBag.isEmpty {
             shoppingBagButton.quantityLabel.text = "\(customer.shoppingBag.count)"
         } else {
@@ -103,21 +138,6 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         
         // set back button
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
-        
-//        shoppingBagButton.backgroundColor = UIColor.red
-//        shoppingBagButton.setImage(UIImage(named: "shopping-bag128")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal), for: UIControl.State.normal)
-        
-//        let shoppingBagImageView = UIImageView()
-//        shoppingBagImageView.image = UIImage(named: "shopping-bag")?.withRenderingMode(.alwaysOriginal)
-//        shoppingBagImageView.isUserInteractionEnabled = false
-//        shoppingBagButton.addSubview(shoppingBagImageView)
-//
-//        shoppingBagButton.frame = CGRect(x: 0, y: 0, width: 30, height: 25)
-//        shoppingBagImageView.frame = CGRect(x: 0, y: 5, width: 30, height: 25)
-//        
-//        shoppingBagButton.tag = 2
-//        shoppingBagButton.addTarget(self, action: #selector(handleRightNavBarItem(_:)), for: UIControl.Event.touchUpInside)
-        
         
         shoppingBagButton.frame = CGRect(x: 0, y: 5, width: 30, height: 25)
         shoppingBagButton.tag = 2
@@ -211,16 +231,14 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
         return cell
     }
     
-//    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//        super.collectionView(collectionView, willDisplay: cell, forItemAt: indexPath)
-//        let productCell = cell as! ProductCell
-    
-//        if productCell.productImageView.image == nil {
-//            productCell.activityIndicatorView.isHidden = false
-//            productCell.activityIndicatorView.startAnimating()
-//        }
-        
-//    }
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let displayedCell = cell as! ProductCell
+        if displayedCell.productImageView.image != nil {
+            displayedCell.activityIndicatorView.stopAnimating()
+        } else {
+            displayedCell.activityIndicatorView.startAnimating()
+        }
+    }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
