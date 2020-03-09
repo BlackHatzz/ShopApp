@@ -21,7 +21,6 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     init(category: String?) {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
         
-        
         if category == nil {
             // get data from database
             let productRef = databaseRef.child("product")
@@ -90,8 +89,44 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
                 print(error.localizedDescription)
             }
         }
+    } // init search category if categoroy == nil -> search all
+    
+    init(designer: String) {
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        let productRef = databaseRef.child("product")
+        let productQuery = productRef.queryOrdered(byChild: "designer").queryEqual(toValue: designer).queryLimited(toFirst: 1000)
         
-        
+        productQuery.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+            if let dictionary = snapshot.value as? [String: Any] {
+                for (productId, productInfo) in dictionary {
+                    if let productInfo = productInfo as? [String: Any] {
+                        products.append(Product(id: productId, productInfo: productInfo))
+                    }
+                    
+                    self.collectionView.reloadData()
+                    
+                    self.collectionView.performBatchUpdates({
+                        products.sort(by: { (product1, product2) -> Bool in
+                            return product1.id > product2.id
+                        })
+                    }, completion: { (_) in
+                        self.loadingView.activityIndicatorView.stopAnimating()
+                        self.loadingView.removeFromSuperview()
+                        
+                        for product in products {
+                            product.loadFirstImage(completionHandler: {
+                                // reload data of collection view when load one image
+                                DispatchQueue.main.async {
+                                    self.collectionView.reloadData()
+                                }
+                            })
+                        }
+                    })
+                }
+            }
+        }) { (error) in
+            print(error.localizedDescription)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

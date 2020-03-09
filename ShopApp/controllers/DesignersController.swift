@@ -135,6 +135,15 @@ class DesignersController: UITableViewController {
         return footer
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let sectionKey: String = headers[indexPath.section]
+        let designersInSection = datas[sectionKey]
+        let designerInRow = designersInSection![indexPath.row]
+        
+        let viewController = ProductViewController(designer: designerInRow)
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
 }
 
 final class DesignerCell: UITableViewCell {
