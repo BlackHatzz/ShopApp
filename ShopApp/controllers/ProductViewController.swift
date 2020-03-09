@@ -10,12 +10,12 @@ import UIKit
 import Firebase
 
 private let reuseIdentifier = "Cell"
-private var products = [Product]()
+
 
 class ProductViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     let databaseRef = Database.database().reference()
     let loadingView = ProcessView(title: "Loading", type: ProcessView.NotiType.loading)
-    
+    private var products = [Product]()
     let shoppingBagButton = ShoppingBagButton()
     
     init(category: String?) {
@@ -29,20 +29,20 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
             productQuery.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String: Any] {
                     for (productId, productDictionary) in dictionary {
-                        products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
+                        self.products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
                     }
-                    dump(products)
+                    dump(self.products)
                     self.collectionView.reloadData()
                     
                     self.collectionView.performBatchUpdates({
-                        products.sort(by: { (product1, product2) -> Bool in
+                        self.products.sort(by: { (product1, product2) -> Bool in
                             return product1.id > product2.id
                         })
                     }, completion: { (_) in
                         self.loadingView.activityIndicatorView.stopAnimating()
                         self.loadingView.removeFromSuperview()
                         
-                        for product in products {
+                        for product in self.products {
                             product.loadFirstImage(completionHandler: {
                                 // reload data of collection view when load one image
                                 DispatchQueue.main.async {
@@ -62,20 +62,20 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
             productQuery.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String: Any] {
                     for (productId, productDictionary) in dictionary {
-                        products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
+                        self.products.append(Product(id: productId, productInfo: productDictionary as! [String : Any]))
                     }
-                    dump(products)
+                    dump(self.products)
                     self.collectionView.reloadData()
                     
                     self.collectionView.performBatchUpdates({
-                        products.sort(by: { (product1, product2) -> Bool in
+                        self.products.sort(by: { (product1, product2) -> Bool in
                             return product1.id > product2.id
                         })
                     }, completion: { (_) in
                         self.loadingView.activityIndicatorView.stopAnimating()
                         self.loadingView.removeFromSuperview()
                         
-                        for product in products {
+                        for product in self.products {
                             product.loadFirstImage(completionHandler: {
                                 // reload data of collection view when load one image
                                 DispatchQueue.main.async {
@@ -100,20 +100,20 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
             if let dictionary = snapshot.value as? [String: Any] {
                 for (productId, productInfo) in dictionary {
                     if let productInfo = productInfo as? [String: Any] {
-                        products.append(Product(id: productId, productInfo: productInfo))
+                        self.products.append(Product(id: productId, productInfo: productInfo))
                     }
                     
                     self.collectionView.reloadData()
                     
                     self.collectionView.performBatchUpdates({
-                        products.sort(by: { (product1, product2) -> Bool in
+                        self.products.sort(by: { (product1, product2) -> Bool in
                             return product1.id > product2.id
                         })
                     }, completion: { (_) in
                         self.loadingView.activityIndicatorView.stopAnimating()
                         self.loadingView.removeFromSuperview()
                         
-                        for product in products {
+                        for product in self.products {
                             product.loadFirstImage(completionHandler: {
                                 // reload data of collection view when load one image
                                 DispatchQueue.main.async {
@@ -135,7 +135,7 @@ class ProductViewController: UICollectionViewController, UICollectionViewDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "MIKI SHOP"
+        navigationItem.title = "MIKI"
         setupNavBar()
         
         view.addSubview(loadingView)

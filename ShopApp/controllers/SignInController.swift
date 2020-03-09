@@ -140,7 +140,7 @@ class SignInController: UIViewController {
                     if self.topNotificationLabel.status == .hide {
                         self.topNotificationLabel.status = .show
                     }
-                    self.topNotificationLabel.text = "Too many unsuccesful login. Please try again later"
+                    self.topNotificationLabel.text = "Too many unsuccessful login. Please try again later"
                 }
                 
                 self.loadingView.isHidden = true
