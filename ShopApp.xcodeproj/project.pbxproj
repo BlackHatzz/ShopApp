@@ -11,6 +11,7 @@
 		1501436323BEEAE2007EAA9F /* ShippingAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1501436223BEEAE2007EAA9F /* ShippingAddress.swift */; };
 		1502204423A8A8E000B485DA /* TopNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1502204323A8A8E000B485DA /* TopNotificationLabel.swift */; };
 		1502204623A8C01200B485DA /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1502204523A8C01200B485DA /* RegisterController.swift */; };
+		15068D4C2416477500C85D60 /* RadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15068D4B2416477500C85D60 /* RadioButton.swift */; };
 		1509C62422FBDDF1007F74C1 /* DividerLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62322FBDDF1007F74C1 /* DividerLineView.swift */; };
 		1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1509C62522FBEA36007F74C1 /* ConnectionButton.swift */; };
 		1515684C23BDFAC0006C9756 /* ShippingAddressMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1515684B23BDFAC0006C9756 /* ShippingAddressMenuController.swift */; };
@@ -65,6 +66,7 @@
 		1501436223BEEAE2007EAA9F /* ShippingAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingAddress.swift; sourceTree = "<group>"; };
 		1502204323A8A8E000B485DA /* TopNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNotificationLabel.swift; sourceTree = "<group>"; };
 		1502204523A8C01200B485DA /* RegisterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
+		15068D4B2416477500C85D60 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
 		1509C62322FBDDF1007F74C1 /* DividerLineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DividerLineView.swift; sourceTree = "<group>"; };
 		1509C62522FBEA36007F74C1 /* ConnectionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionButton.swift; sourceTree = "<group>"; };
 		1515684B23BDFAC0006C9756 /* ShippingAddressMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShippingAddressMenuController.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				1502204323A8A8E000B485DA /* TopNotificationLabel.swift */,
 				15CC23DA23BF8F0F00662070 /* ShoppingBagButton.swift */,
 				152CBAAE23C0DAAF004A6F5E /* PurchasedView.swift */,
+				15068D4B2416477500C85D60 /* RadioButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -417,6 +420,7 @@
 				15D7C9D4231D51EA002FA0EC /* UIColor.swift in Sources */,
 				15F66E5223A358C800DE465A /* TransactionLabel.swift in Sources */,
 				15CBA2D222E154D5009E58ED /* UIScrollView.swift in Sources */,
+				15068D4C2416477500C85D60 /* RadioButton.swift in Sources */,
 				1509C62622FBEA36007F74C1 /* ConnectionButton.swift in Sources */,
 				1515684E23BE1628006C9756 /* UIApplication.swift in Sources */,
 				155EAE0F23708FFB00F92449 /* BagController.swift in Sources */,

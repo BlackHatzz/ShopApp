@@ -66,7 +66,7 @@ class Product: NSObject {
     }
     
     struct InfoKey {
-        //static let id = "id"
+        static let id = "id"
         static let name = "name"
         static let nameSearch = "nameSearch"
         static let imageUrls = "imageUrls"

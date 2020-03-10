@@ -84,22 +84,22 @@ class BagController: UIViewController {
         
         // when pressed checkout button
         shoppingCollectionView.didTouchUpInSideCheckoutButton = {() -> Void in
-//            let viewController = CheckoutController()
-//            let viewController = ShoppingAddressFormController()
-//            if customer.id == nil {
-//                // when customer have not signed in
-//                let viewController = SignInController()
-//                let navController = UINavigationController(rootViewController: viewController)
-//                self.navigationController?.present(navController, animated: true, completion: nil)
-//            } else {
-//                // when customer have signed in
-//                let viewController = ShippingAddressMenuController()
-//                let navController = UINavigationController(rootViewController: viewController)
-//                self.navigationController?.present(navController, animated: true, completion: nil)
-//            }
-            let viewController = ShippingAddressFormController()
-            let navController = UINavigationController(rootViewController: viewController)
-            self.navigationController?.present(navController, animated: true, completion: nil)
+            let viewController = CheckoutController()
+//            let viewController = ShippingAddressFormController()
+            if customer.id == nil {
+                // when customer have not signed in
+                let viewController = SignInController()
+                let navController = UINavigationController(rootViewController: viewController)
+                self.navigationController?.present(navController, animated: true, completion: nil)
+            } else {
+                // when customer have signed in
+                let viewController = ShippingAddressMenuController()
+                let navController = UINavigationController(rootViewController: viewController)
+                self.navigationController?.present(navController, animated: true, completion: nil)
+            }
+//            let viewController = ShippingAddressFormController()
+//            let navController = UINavigationController(rootViewController: viewController)
+//            self.navigationController?.present(navController, animated: true, completion: nil)
         }
         
         // set handler for segmentedControl

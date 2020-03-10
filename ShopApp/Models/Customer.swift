@@ -19,11 +19,11 @@ class Customer: NSObject {
         return firstname! + " " + lastname!
     }
     var email: String?
-    
+    var orderIds: [String]?
     
     var shoppingBag = [ShoppingItem]()
     var wishList = [ShoppingItem]()
-//    var shippingAddressList = [ShippingAddress]()
+    var shippingAddressList = [ShippingAddress]()
     
     enum BagType {
         case shoppingBag
@@ -44,12 +44,15 @@ class Customer: NSObject {
         self.firstname = userInfo[key.firstname] as? String
         self.lastname = userInfo[key.lastname] as? String
         self.email = userInfo[key.email] as? String
+        self.orderIds = userInfo[key.orderIds] as? [String]
     }
     
     struct InfoKey {
         static let firstname = "firstname"
         static let lastname = "lastname"
         static let email = "email"
+        static let orderIds = "orderIds"
+        static let shippingAddress = "shippingAddress"
     }
     
     

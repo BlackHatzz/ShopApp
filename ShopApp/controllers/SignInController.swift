@@ -147,17 +147,54 @@ class SignInController: UIViewController {
                 self.enableFields()
                 return
             }
+            // get presetingViewController
+            // use weak var to prevent leak memory
             weak var pvc = self.presentingViewController
             // get uid from auth firebase
             if let uid = authResult?.user.uid {
                 let ref = Database.database().reference().child("customer").child(uid)
                 ref.observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
                     if let customerInfo = snapshot.value as? [String: Any] {
-                        // get customer info and dismiss current view controller
+                        
+                        var orderIds: [String]? = nil
+                        
+                        // get order id of customer and append to array
+                        if let orders = customerInfo[Customer.InfoKey.orderIds] as? [String: Any] {
+                            orderIds = [String]()
+                            for key in orders.keys {
+                                orderIds?.append(key)
+                            }
+                        }
+                        
+                        var shippingAddressList = [ShippingAddress]()
+                        
+                        // get shippingAddress
+                        if let shippingAddressDictionary = customerInfo[Customer.InfoKey.shippingAddress] as? [String: Any] {
+                            for (key, value) in shippingAddressDictionary {
+                                if let dictionaryValue = value as? [String: Any] {
+                                    shippingAddressList.append(ShippingAddress(id: key, dictionary: dictionaryValue))
+                                }
+                            }
+                        }
+                        
+                        // get shoppingBag and wishList when user didnt sign in
+                        let shoppingBag = customer.shoppingBag
+                        let wishList = customer.wishList
+                        
+                        // get customer info
                         customer = Customer(id: uid, userInfo: customerInfo)
+                        customer.orderIds = orderIds
+                        // get shoppingBag and wishList when user didnt sign in
+                        customer.shoppingBag = shoppingBag
+                        customer.wishList = wishList
+                        customer.shippingAddressList = shippingAddressList
+                        print("add list")
+                        dump(customer.shippingAddressList)
+                        
                         self.view.endEditing(true)
                         self.navigationController?.dismiss(animated: true, completion: {
                             if let topController = UIApplication.topViewController() {
+                                // if only for BagController
                                 if topController is BagController {
                                     let viewController = ShippingAddressMenuController()
                                     let navController = UINavigationController(rootViewController: viewController)

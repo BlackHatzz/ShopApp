@@ -42,6 +42,8 @@ class RegisterController: UIViewController {
     
     let registerButton = DarkButton(title: "Register", style: .active)
     
+// ---------------------------------------------------------------------------
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
@@ -75,6 +77,14 @@ class RegisterController: UIViewController {
             print("contentsize", self.containerFormView.frame.height, contentSizeHeight)
         }
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+// ---------------------------------------------------------------------------
     
     private func setupNavbar() {
         let cancelButton = UIBarButtonItem(title: "\u{2715}", style: UIBarButtonItem.Style.plain, target: self, action: #selector(handleCancelButton))

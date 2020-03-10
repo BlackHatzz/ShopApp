@@ -9,8 +9,8 @@
 import UIKit
 import Firebase
 
-class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
-    var scrollViewBottomLayoutConstraint: NSLayoutConstraint? = nil
+class ShippingAddressFormController: UIViewController {
+    var scrollViewBottomLayoutConstraint: NSLayoutConstraint! = nil
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -28,6 +28,8 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
         return view
     }()
     
+    var activeField: UITextField!
+    
     let firstNameField = FieldCheckerView(title: "First Name", style: .bottomNotificationLabel)
     let lastNameField = FieldCheckerView(title: "Last Name", style: .bottomNotificationLabel)
     let addressField = FieldCheckerView(title: "Address", style: .bottomNotificationLabel)
@@ -44,20 +46,13 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
         
         setupNavbar()
         setupViews()
-        
-//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-//            target: self,
-//            action: #selector(dismissKeyboard))
-//
-//        tap.cancelsTouchesInView = false
-//        view.addGestureRecognizer(tap)
-        scrollView.delegate = self
-        
         setupEvents()
+        setupObserver()
     }
     
+    
     private func setupNavbar() {
-        navigationItem.title = "Shopping Address"
+        navigationItem.title = "Shipping Address"
         
         navigationItem.hidesBackButton = false
         
@@ -68,8 +63,8 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
     }
     
     @objc func handleBackButton() {
-//        self.navigationController?.popViewController(animated: true)
-        self.navigationController?.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
+//        self.navigationController?.dismiss(animated: true, completion: nil)
     }
     
     private func setupViews() {
@@ -95,7 +90,7 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
         scrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         scrollView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         scrollView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        scrollViewBottomLayoutConstraint = scrollView.bottomAnchor.constraint(equalTo: purchaseContainer.topAnchor, constant: 0)
+        scrollViewBottomLayoutConstraint = scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         scrollViewBottomLayoutConstraint!.isActive = true
         
         // setup containerView
@@ -105,7 +100,7 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
         containerView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 8).isActive = true
         containerView.widthAnchor.constraint(equalToConstant: view.frame.width - 16).isActive = true
 //        containerView.heightAnchor.constraint(equalToConstant: view.frame.width - 12).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 800).isActive = true
+        containerView.heightAnchor.constraint(equalToConstant: 900).isActive = true
         
         // setup views in containerView
         containerView.addSubview(firstNameField)
@@ -176,7 +171,9 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
         phoneField.textField.addTarget(self, action: #selector(textFieldEditingDidBegin(_:)), for: UIControl.Event.editingDidBegin)
         
         purchaseContainer.handlerButton.addTarget(self, action: #selector(handlePurchase), for: UIControl.Event.touchUpInside)
-        
+    }
+    
+    private func setupObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -184,39 +181,31 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
     @objc private func handleKeyboardWillShow(_ notification: Notification) {
         guard let keyboardFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue else { return }
         guard let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue else { return }
-        print("will show", keyboardFrame)
-        scrollViewBottomLayoutConstraint?.isActive = false
-        scrollViewBottomLayoutConstraint = scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -keyboardFrame.height)
-        scrollViewBottomLayoutConstraint?.isActive = true
+        
+        self.scrollViewBottomLayoutConstraint.constant = -keyboardFrame.height
         
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
+            if let activeField = self.activeField {
+                // scroll to the top of the textfield(container of textfield)
+                self.scrollView.setContentOffset(CGPoint(x: self.scrollView.contentOffset.x, y: min(activeField.superview!.superview!.frame.minY, self.scrollView.contentSize.height - self.scrollView.frame.height)), animated: false)
+            }
         }
+        
     }
+    
     @objc private func handleKeyboardWillHide(_ notification: Notification) {
         guard let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue else { return }
-        print("will hide")
-        scrollViewBottomLayoutConstraint?.isActive = false
-        scrollViewBottomLayoutConstraint = scrollView.bottomAnchor.constraint(equalTo: purchaseContainer.topAnchor)
-        scrollViewBottomLayoutConstraint?.constant = 0
-        scrollViewBottomLayoutConstraint?.isActive = true
+        
+        scrollViewBottomLayoutConstraint.constant = 0
+//        loadingView.center.y = view.center.y - 50
         
         UIView.animate(withDuration: keyboardDuration) {
             self.view.layoutIfNeeded()
         }
     }
     
-    
-//    @objc private func dismissKeyboard() {
-//        view.endEditing(true)
-//    }
-//
-//    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-//        view.endEditing(true)
-//    }
-    
     @objc private func textFieldEditingDidEnd(_ sender: UITextField) {
-        print("sender", sender.text as Any)
         guard let superView = sender.superview?.superview as? FieldCheckerView else { return }
         guard let text = sender.text else { return }
         if text.isEmpty {
@@ -226,7 +215,8 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
         }
     }
     @objc private func textFieldEditingDidBegin(_ sender: UITextField) {
-        print("begin")
+        sender.becomeFirstResponder()
+        self.activeField = sender
         guard let superView = sender.superview?.superview as? FieldCheckerView else { return }
         superView.status = .focus
     }
@@ -246,7 +236,7 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
             }
 
         }
-        
+
         if phoneField.status != .invalid {
             if !phoneField.textField.text!.isValidPhoneNumber() {
                 phoneField.status = .invalid
@@ -254,72 +244,146 @@ class ShippingAddressFormController: UIViewController, UIScrollViewDelegate {
                 isValid = false
             }
         }
-        
+
         if !isValid { return }
         
         
-        
+        let shippingAddressInfo: [String: Any] = [
+            ShippingAddress.InfoKey.firstName: firstNameField.textField.text!,
+            ShippingAddress.InfoKey.lastName: lastNameField.textField.text!,
+            ShippingAddress.InfoKey.address: addressField.textField.text!,
+            ShippingAddress.InfoKey.city: cityField.textField.text!,
+            ShippingAddress.InfoKey.state: stateField.textField.text!,
+            ShippingAddress.InfoKey.country: countryField.textField.text!,
+            ShippingAddress.InfoKey.phoneNumber: phoneField.textField.text!
+        ]
+        let addressRef = Database.database().reference().child("customer").child(customer.id!).child(Customer.InfoKey.shippingAddress)
+        addressRef.childByAutoId().updateChildValues(shippingAddressInfo) { (error, ref) in
+            if let error = error {
+                print(error)
+                return
+            }
+            
+        }
         
         // area is county/state/province
+        /*
+        var orderInfo: [String: Any]? = nil // [orderOfItem: [productId: [info]]
+        print("shopping bag", customer.shoppingBag)
+        if !customer.shoppingBag.isEmpty {
+            orderInfo = [String: Any]()
+        }
         
-        let orderRef = Database.database().reference().child("order")
-        var orderId: String? = nil
-        orderRef.queryOrdered(byChild: "orderId").queryLimited(toLast: 1).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
-            
-            var lastId: String? = nil
-            // get the last node
-            if let lastOrder = (snapshot.value as? NSArray)?.lastObject as? [String: Any] {
-                // when return a ns array
-                lastId = lastOrder["orderId"] as? String
-            } else if let lastOrder = ((snapshot.value as? [String: Any])?.first?.value) as? [String: Any] {
-                // when return a dictionary
-                lastId = lastOrder["orderId"] as? String
-            }
-            orderId = "\(Int(lastId!)! + 1)"
-            
-            
-            let order: [String: Any] = [
-                //            "customerId": customer.id!,
-                "firstname": self.firstNameField.textField.text!,
-                "lastname": self.lastNameField.textField.text!,
-                "address": self.addressField.textField.text!,
-                "city": self.cityField.textField.text!,
-                "area": self.stateField.textField.text!,
-                "country": self.countryField.textField.text!,
-                "phone": self.phoneField.textField.text!,
-                "orderId": orderId!
+        for (i, shoppingItem) in customer.shoppingBag.enumerated() {
+            let id = shoppingItem.id
+            let color = shoppingItem.color
+            let size = shoppingItem.size
+            let quantity = shoppingItem.quantity
+            let price = shoppingItem.discountPrice // dont get original price because it not the price use user have to paid
+            let timestamp = Date().timeIntervalSince1970
+            typealias Key = Product.InfoKey
+                
+            // add new item to orderInfo dictionary
+            orderInfo!["item\(i)"] = [
+                Key.id: id,
+                Key.textColors: color,
+                Key.sizes: size,
+                Key.quantity: quantity,
+                Key.discountPrice: price,
+                "orderTimeStamp": timestamp
             ]
-            
-            let updateOrderRef = Database.database().reference().child("order").child(orderId!)
-            updateOrderRef.updateChildValues(order) { (error, databaseRef) in
+        }
+        
+        if let orderInfo = orderInfo {
+            let orderRef = Database.database().reference().child("order")
+            orderRef.childByAutoId().updateChildValues(orderInfo, withCompletionBlock: { (error, ref) in
                 if let error = error {
-                    print("Cannot order. The error is", error)
+                    print(error)
                     return
                 }
-                orderRef.removeAllObservers()
+                // updated
                 
-                let processView = ProcessView(title: "Successed", type: ProcessView.NotiType.checked)
-                if let windowView = UIApplication.shared.keyWindow {
-                    windowView.addSubview(processView)
-                }
+                if let orderId = ref.key {
+                    let customerRef = Database.database().reference().child("customer")
+                    customerRef.child("\(customer.id!)").child("orderIds").updateChildValues([orderId: "none"], withCompletionBlock: { (error, ref) in
+                        if let error = error {
+                            print(error)
+                            return
+                        }
+                        
+                        // updated
+                    }) // update order id to customer node
+                } // optional binding order id
                 
-                self.navigationController?.dismiss(animated: true, completion: nil)
-            }
+            }) // update order node
+        } // optional binding for orderInfo
             
-        }) { (error) in
-            print(error.localizedDescription)
-        }
+            
+        */
+        
+        
+        
+        
+//        let orderRef = Database.database().reference().child("order")
+//        var orderId: String? = nil
+//        orderRef.queryOrdered(byChild: "orderId").queryLimited(toLast: 1).observeSingleEvent(of: DataEventType.value, with: { (snapshot) in
+//
+//            var lastId: String? = nil
+//            // get the last node
+//            if let lastOrder = (snapshot.value as? NSArray)?.lastObject as? [String: Any] {
+//                // when return a ns array
+//                lastId = lastOrder["orderId"] as? String
+//            } else if let lastOrder = ((snapshot.value as? [String: Any])?.first?.value) as? [String: Any] {
+//                // when return a dictionary
+//                lastId = lastOrder["orderId"] as? String
+//            }
+//            orderId = "\(Int(lastId!)! + 1)"
+//
+//
+//            let order: [String: Any] = [
+//                //            "customerId": customer.id!,
+//                "firstname": self.firstNameField.textField.text!,
+//                "lastname": self.lastNameField.textField.text!,
+//                "address": self.addressField.textField.text!,
+//                "city": self.cityField.textField.text!,
+//                "area": self.stateField.textField.text!,
+//                "country": self.countryField.textField.text!,
+//                "phone": self.phoneField.textField.text!,
+//                "orderId": orderId!
+//            ]
+//
+//            let updateOrderRef = Database.database().reference().child("order").child(orderId!)
+//            updateOrderRef.updateChildValues(order) { (error, databaseRef) in
+//                if let error = error {
+//                    print("Cannot order. The error is", error)
+//                    return
+//                }
+//                orderRef.removeAllObservers()
+//
+//                let processView = ProcessView(title: "Successed", type: ProcessView.NotiType.checked)
+//                if let windowView = UIApplication.shared.keyWindow {
+//                    windowView.addSubview(processView)
+//                }
+//
+//                self.navigationController?.dismiss(animated: true, completion: nil)
+//            }
+//
+//        }) { (error) in
+//            print(error.localizedDescription)
+//        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        self.scrollView.setNeedsLayout()
-        self.scrollView.layoutIfNeeded()
-        self.containerView.setNeedsLayout()
-        self.containerView.layoutIfNeeded()
+        DispatchQueue.main.async {
+            self.scrollView.setNeedsLayout()
+            self.scrollView.layoutIfNeeded()
+            self.containerView.setNeedsLayout()
+            self.containerView.layoutIfNeeded()
             
-        self.scrollView.contentSize.height = self.containerView.frame.height
+            self.scrollView.contentSize.height = self.containerView.frame.height
+        }
     }
     
 }
